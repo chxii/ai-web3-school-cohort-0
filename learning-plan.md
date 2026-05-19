@@ -99,10 +99,16 @@
 ## 当前进度
 
 - [x] 初始化完成 (2026-05-18)
-- [ ] 阶段一：Web3 基础 — 进行中
-  - [ ] Network
-  - [ ] Cryptography
-  - [ ] Wallet
-  - [ ] Smart Contract
-  - [ ] Account Abstraction
-  - [ ] DeFi & Oracle
+- [x] 阶段一：Web3 基础 — 完成（2天，2026-05-18 ~ 2026-05-19）
+  - [x] Network — Day 2
+  - [x] Cryptography — Day 1
+  - [x] Wallet — Day 1
+  - [x] Smart Contract — Day 2
+  - [x] Account Abstraction — Day 2
+  - [x] DeFi & Oracle — Day 2
+  - [ ] Indexing — 待补充
+  - [ ] Security — 待补充
+  - [ ] Dev Stack — 待补充
+- [ ] 阶段二：AI 基础 — 明天开始
+- [ ] 阶段三：AI × Web3 Bridge
+- [ ] 阶段四：前沿探索 & Hackathon 准备
