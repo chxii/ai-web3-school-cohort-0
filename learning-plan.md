@@ -109,6 +109,6 @@
   - [ ] Indexing — 待补充
   - [ ] Security — 待补充
   - [ ] Dev Stack — 待补充
-- [ ] 阶段二：AI 基础 — 明天开始
+- [ ] 阶段二：AI 基础 — 待开始
 - [ ] 阶段三：AI × Web3 Bridge
 - [ ] 阶段四：前沿探索 & Hackathon 准备
