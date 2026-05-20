@@ -1,0 +1,10 @@
+{
+  "simpleStorage.sol": {
+    "__sources__": {
+      "simpleStorage.sol": {
+        "content": "// SPDX-License-Identifier: UNLICENSED\r\npragma solidity ^0.8.34;\r\n\r\ncontract SimpleStorage {\r\n    uint256 public number;\r\n    function set(uint256 _number) public {\r\n        number = _number;\r\n    }\r\n}",
+        "file": "simpleStorage.sol"
+      }
+    }
+  }
+}
