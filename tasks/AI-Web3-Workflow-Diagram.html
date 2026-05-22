@@ -1,314 +1,264 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>最小 AI × Web3 工作流</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'JetBrains Mono', monospace;
-      background: #020617;
-      min-height: 100vh;
-      padding: 2rem;
-      color: white;
-    }
-    .container { max-width: 1300px; margin: 0 auto; }
-
-    .header { margin-bottom: 1.5rem; }
-    .header-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
-    .pulse-dot { width: 10px; height: 10px; background: #22d3ee; border-radius: 50%; animation: pulse 2s infinite; flex-shrink: 0; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
-    .subtitle { color: #64748b; font-size: 0.8rem; margin-left: 1.75rem; }
-
-    .diagram-card {
-      background: rgba(15,23,42,0.6);
-      border: 1px solid #1e293b;
-      border-radius: 1rem;
-      padding: 1.5rem;
-      overflow-x: auto;
-    }
-    svg { width: 100%; min-width: 900px; display: block; }
-
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
-    .card { background: rgba(15,23,42,0.5); border-radius: 0.75rem; border: 1px solid #1e293b; padding: 1.1rem; }
-    .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem; }
-    .card-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .card h3 { font-size: 0.8rem; font-weight: 600; }
-    .card ul { list-style: none; color: #94a3b8; font-size: 0.72rem; line-height: 1.6; }
-    .card li { margin-bottom: 0.2rem; }
-    .card li::before { content: '· '; }
-
-    .problem-box {
-      background: rgba(251,191,36,0.07);
-      border: 1px solid rgba(251,191,36,0.25);
-      border-radius: 0.75rem;
-      padding: 1rem 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-    .problem-box h3 { color: #fbbf24; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem; }
-    .problem-box p { color: #94a3b8; font-size: 0.75rem; line-height: 1.7; }
-    .problem-box strong { color: #fcd34d; }
-
-    .footer { text-align: center; margin-top: 1.5rem; color: #475569; font-size: 0.7rem; }
-
-    .note { color: #475569; font-size: 0.72rem; margin-top: 0.5rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>最小 AI × Web3 工作流</title>
+<style>
+  body{font-family:monospace;background:#020617;color:#e2e8f0;padding:1.5rem;margin:0}
+  .container{max-width:1300px;margin:0 auto}
+  h1{font-size:1.1rem;margin-bottom:0.2rem;color:#e2e8f0}
+  .subtitle{color:#64748b;font-size:0.75rem;margin-bottom:1.2rem}
+  .diagram{background:rgba(15,23,42,0.6);border:1px solid #1e293b;border-radius:12px;padding:1rem;overflow-x:auto;margin-bottom:1.2rem}
+  .diagram svg{width:100%;min-width:700px;display:block}
+  .problem-box{background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.25);border-radius:8px;padding:0.8rem 1rem;margin-bottom:1.2rem;font-size:0.8rem;line-height:1.7}
+  .problem-box strong{color:#fbbf24}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0.8rem}
+  .card{background:rgba(15,23,42,0.5);border:1px solid #1e293b;border-radius:8px;padding:0.9rem;font-size:0.75rem}
+  .card h3{margin:0 0 0.5rem 0;font-size:0.8rem;display:flex;align-items:center;gap:0.4rem}
+  .card ul{margin:0;padding-left:1.1rem;line-height:1.8;color:#94a3b8}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+  .footer{text-align:center;margin-top:1.5rem;color:#475569;font-size:0.7rem}
+</style>
 </head>
 <body>
 <div class="container">
+  <h1>最小 AI × Web3 工作流</h1>
+  <p class="subtitle">人工发起 → AI 理解 → AI 规划 → RPC 工具 → 钱包签名 → 链上执行 → 区块验证</p>
 
-  <div class="header">
-    <div class="header-row">
-      <div class="pulse-dot"></div>
-      <h1>最小 AI × Web3 工作流</h1>
-    </div>
-    <p class="subtitle">人工发起 → AI 规划 → RPC 工具 → 钱包签名 → 链上执行 → 区块验证</p>
-  </div>
-
-  <!-- Problem Statement -->
   <div class="problem-box">
-    <h3>这个流程解决什么问题</h3>
-    <p>
-      <strong>问题：</strong>AI Agent 没有私钥、不能签名、不能付 Gas，而链上写入操作不可逆。AI 有幻觉风险，可能给出错误的合约调用参数或被 Prompt Injection 攻击。<br>
-      <strong>解决：</strong>明确界定每一步由谁执行。AI 负责理解、规划、解析结果；工具负责 RPC 调用；<strong>写入操作必须人工触发钱包确认，AI 无法绕过</strong>。
-    </p>
+    <strong>这个流程解决什么问题</strong><br>
+    <strong>问题：</strong>AI Agent 没有私钥、不能签名、不能付 Gas，而链上写入操作不可逆。AI 有幻觉风险，可能给出错误的合约调用参数或被 Prompt Injection 攻击。<br>
+    <strong>解决：</strong>明确界定每一步由谁执行。AI 负责理解、规划、解析结果；工具负责 RPC 调用；<strong>写入操作必须人工触发钱包确认，AI 无法绕过</strong>。
   </div>
 
-  <!-- Main Diagram -->
-  <div class="diagram-card">
-    <svg viewBox="0 0 1100 280" xmlns="http://www.w3.org/2000/svg">
+  <div class="diagram">
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: AIxWeb3 Pages: 1 -->
+<svg style="background:#020617;" width="846pt" height="900pt"
+ viewBox="0.00 0.00 406.14 432.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.91 0.91) rotate(0) translate(28.8 956.8)">
+<title>AIxWeb3</title>
+<g id="clust1" class="cluster">
+<title>cluster_human</title>
+<path fill="#083344" stroke="#22d3ee" d="M341,-8C341,-8 435,-8 435,-8 441,-8 447,-14 447,-20 447,-20 447,-198 447,-198 447,-204 441,-210 435,-210 435,-210 341,-210 341,-210 335,-210 329,-204 329,-198 329,-198 329,-20 329,-20 329,-14 335,-8 341,-8"/>
+<text text-anchor="middle" x="388" y="-198.8" font-family="monospace" font-size="9.00" fill="#22d3ee">👤 Human</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster_ai</title>
+<path fill="#064e3b" stroke="#34d399" d="M74.5,-218C74.5,-218 431,-218 431,-218 437,-218 443,-224 443,-230 443,-230 443,-342 443,-342 443,-348 437,-354 431,-354 431,-354 74.5,-354 74.5,-354 68.5,-354 62.5,-348 62.5,-342 62.5,-342 62.5,-230 62.5,-230 62.5,-224 68.5,-218 74.5,-218"/>
+<text text-anchor="middle" x="252.75" y="-342.8" font-family="monospace" font-size="9.00" fill="#34d399">🤖 AI Agent</text>
+</g>
+<g id="clust3" class="cluster">
+<title>cluster_rpc</title>
+<path fill="#78350f" stroke="#fbbf24" d="M536,-184C536,-184 643,-184 643,-184 649,-184 655,-190 655,-196 655,-196 655,-308 655,-308 655,-314 649,-320 643,-320 643,-320 536,-320 536,-320 530,-320 524,-314 524,-308 524,-308 524,-196 524,-196 524,-190 530,-184 536,-184"/>
+<text text-anchor="middle" x="589.5" y="-308.8" font-family="monospace" font-size="9.00" fill="#fbbf24">🔧 RPC 工具</text>
+</g>
+<g id="clust4" class="cluster">
+<title>cluster_chain</title>
+<path fill="#4c1d95" stroke="#a78bfa" d="M546.5,-12C546.5,-12 849,-12 849,-12 855,-12 861,-18 861,-24 861,-24 861,-78 861,-78 861,-84 855,-90 849,-90 849,-90 546.5,-90 546.5,-90 540.5,-90 534.5,-84 534.5,-78 534.5,-78 534.5,-24 534.5,-24 534.5,-18 540.5,-12 546.5,-12"/>
+<text text-anchor="middle" x="697.75" y="-78.8" font-family="monospace" font-size="9.00" fill="#a78bfa">⛓️ 链上</text>
+</g>
+<g id="clust5" class="cluster">
+<title>cluster_legend</title>
+<path fill="#0f172a" stroke="#1e293b" d="M73,-362C73,-362 162,-362 162,-362 168,-362 174,-368 174,-374 174,-374 174,-664 174,-664 174,-670 168,-676 162,-676 162,-676 73,-676 73,-676 67,-676 61,-670 61,-664 61,-664 61,-374 61,-374 61,-368 67,-362 73,-362"/>
+<text text-anchor="middle" x="117.5" y="-664.8" font-family="monospace" font-size="9.00" fill="#94a3b8">图例</text>
+</g>
+<g id="clust6" class="cluster">
+<title>cluster_risk</title>
+<path fill="#881337" stroke="#fb7185" d="M20,-684C20,-684 215,-684 215,-684 221,-684 227,-690 227,-696 227,-696 227,-790 227,-790 227,-796 221,-802 215,-802 215,-802 20,-802 20,-802 14,-802 8,-796 8,-790 8,-790 8,-696 8,-696 8,-690 14,-684 20,-684"/>
+<text text-anchor="middle" x="117.5" y="-790.8" font-family="monospace" font-size="9.00" fill="#fb7185">⚠ 主要风险</text>
+</g>
+<g id="clust7" class="cluster">
+<title>cluster_principle</title>
+<path fill="#064e3b" stroke="#34d399" d="M41,-810C41,-810 194,-810 194,-810 200,-810 206,-816 206,-822 206,-822 206,-908 206,-908 206,-914 200,-920 194,-920 194,-920 41,-920 41,-920 35,-920 29,-914 29,-908 29,-908 29,-822 29,-822 29,-816 35,-810 41,-810"/>
+<text text-anchor="middle" x="117.5" y="-908.8" font-family="monospace" font-size="9.00" fill="#34d399">✓ 核心原则</text>
+</g>
+<!-- user -->
+<g id="node1" class="node">
+<title>user</title>
+<path fill="#083344" stroke="#22d3ee" d="M419,-122C419,-122 357,-122 357,-122 351,-122 345,-116 345,-110 345,-110 345,-98 345,-98 345,-92 351,-86 357,-86 357,-86 419,-86 419,-86 425,-86 431,-92 431,-98 431,-98 431,-110 431,-110 431,-116 425,-122 419,-122"/>
+<text text-anchor="middle" x="388" y="-101.8" font-family="monospace" font-size="9.00" fill="#22d3ee">用户发起任务</text>
+</g>
+<!-- understand -->
+<g id="node4" class="node">
+<title>understand</title>
+<path fill="#064e3b" stroke="#34d399" d="M148.5,-266C148.5,-266 86.5,-266 86.5,-266 80.5,-266 74.5,-260 74.5,-254 74.5,-254 74.5,-242 74.5,-242 74.5,-236 80.5,-230 86.5,-230 86.5,-230 148.5,-230 148.5,-230 154.5,-230 160.5,-236 160.5,-242 160.5,-242 160.5,-254 160.5,-254 160.5,-260 154.5,-266 148.5,-266"/>
+<text text-anchor="middle" x="117.5" y="-245.8" font-family="monospace" font-size="9.00" fill="#34d399">AI 理解任务</text>
+</g>
+<!-- user&#45;&gt;understand -->
+<g id="edge1" class="edge">
+<title>user&#45;&gt;understand</title>
+<path fill="none" stroke="#22d3ee" stroke-width="2" d="M344.92,-104C268.69,-104 118,-104 118,-104 118,-104 118,-222.76 118,-222.76"/>
+<polygon fill="#22d3ee" stroke="#22d3ee" stroke-width="2" points="115.55,-222.76 118,-229.76 120.45,-222.76 115.55,-222.76"/>
+<text text-anchor="middle" x="279" y="-144.6" font-family="monospace" font-size="8.00">对话</text>
+</g>
+<!-- review -->
+<g id="node2" class="node">
+<title>review</title>
+<path fill="#083344" stroke="#22d3ee" d="M419,-180C419,-180 357,-180 357,-180 351,-180 345,-174 345,-168 345,-168 345,-156 345,-156 345,-150 351,-144 357,-144 357,-144 419,-144 419,-144 425,-144 431,-150 431,-156 431,-156 431,-168 431,-168 431,-174 425,-180 419,-180"/>
+<text text-anchor="middle" x="388" y="-159.8" font-family="monospace" font-size="9.00" fill="#22d3ee">人工复核方案</text>
+</g>
+<!-- wallet -->
+<g id="node3" class="node">
+<title>wallet</title>
+<path fill="#881337" stroke="#fb7185" d="M419,-60C419,-60 357,-60 357,-60 351,-60 345,-54 345,-48 345,-48 345,-36 345,-36 345,-30 351,-24 357,-24 357,-24 419,-24 419,-24 425,-24 431,-30 431,-36 431,-36 431,-48 431,-48 431,-54 425,-60 419,-60"/>
+<path fill="none" stroke="#fb7185" d="M423,-64C423,-64 353,-64 353,-64 347,-64 341,-58 341,-52 341,-52 341,-32 341,-32 341,-26 347,-20 353,-20 353,-20 423,-20 423,-20 429,-20 435,-26 435,-32 435,-32 435,-52 435,-52 435,-58 429,-64 423,-64"/>
+<text text-anchor="middle" x="388" y="-39.8" font-family="monospace" font-size="9.00" fill="#fb7185">钱包签名确认</text>
+</g>
+<!-- txsubmit -->
+<g id="node9" class="node">
+<title>txsubmit</title>
+<path fill="#4c1d95" stroke="#a78bfa" d="M620.5,-60C620.5,-60 558.5,-60 558.5,-60 552.5,-60 546.5,-54 546.5,-48 546.5,-48 546.5,-36 546.5,-36 546.5,-30 552.5,-24 558.5,-24 558.5,-24 620.5,-24 620.5,-24 626.5,-24 632.5,-30 632.5,-36 632.5,-36 632.5,-48 632.5,-48 632.5,-54 626.5,-60 620.5,-60"/>
+<text text-anchor="middle" x="589.5" y="-39.8" font-family="monospace" font-size="9.00" fill="#a78bfa">交易上链</text>
+</g>
+<!-- wallet&#45;&gt;txsubmit -->
+<g id="edge7" class="edge">
+<title>wallet&#45;&gt;txsubmit</title>
+<path fill="none" stroke="#fb7185" stroke-width="2" d="M435.24,-36C435.24,-36 539.33,-36 539.33,-36"/>
+<polygon fill="#fb7185" stroke="#fb7185" stroke-width="2" points="539.33,-38.45 546.33,-36 539.33,-33.55 539.33,-38.45"/>
+<text text-anchor="middle" x="485.5" y="-44.6" font-family="monospace" font-size="8.00">tx</text>
+</g>
+<!-- plan -->
+<g id="node5" class="node">
+<title>plan</title>
+<path fill="#064e3b" stroke="#34d399" d="M419,-266C419,-266 357,-266 357,-266 351,-266 345,-260 345,-254 345,-254 345,-242 345,-242 345,-236 351,-230 357,-230 357,-230 419,-230 419,-230 425,-230 431,-236 431,-242 431,-242 431,-254 431,-254 431,-260 425,-266 419,-266"/>
+<text text-anchor="middle" x="388" y="-245.8" font-family="monospace" font-size="9.00" fill="#34d399">AI 规划工具</text>
+</g>
+<!-- understand&#45;&gt;plan -->
+<g id="edge2" class="edge">
+<title>understand&#45;&gt;plan</title>
+<path fill="none" stroke="#34d399" d="M160.66,-248C160.66,-248 337.99,-248 337.99,-248"/>
+<polygon fill="#34d399" stroke="#34d399" points="337.99,-250.45 344.99,-248 337.99,-245.55 337.99,-250.45"/>
+<text text-anchor="middle" x="279" y="-254.6" font-family="monospace" font-size="8.00">意图+规划</text>
+</g>
+<!-- eth_call -->
+<g id="node7" class="node">
+<title>eth_call</title>
+<path fill="#78350f" stroke="#fbbf24" d="M626,-290C626,-290 553,-290 553,-290 547,-290 541,-284 541,-278 541,-278 541,-266 541,-266 541,-260 547,-254 553,-254 553,-254 626,-254 626,-254 632,-254 638,-260 638,-266 638,-266 638,-278 638,-278 638,-284 632,-290 626,-290"/>
+<text text-anchor="middle" x="589.5" y="-269.8" font-family="monospace" font-size="9.00" fill="#fbbf24">eth_call (只读)</text>
+</g>
+<!-- plan&#45;&gt;eth_call -->
+<g id="edge3" class="edge">
+<title>plan&#45;&gt;eth_call</title>
+<path fill="none" stroke="#fbbf24" d="M431.23,-260C431.23,-260 533.68,-260 533.68,-260"/>
+<polygon fill="#fbbf24" stroke="#fbbf24" points="533.68,-262.45 540.68,-260 533.68,-257.55 533.68,-262.45"/>
+<text text-anchor="middle" x="485.5" y="-268.6" font-family="monospace" font-size="8.00">只读</text>
+</g>
+<!-- eth_send -->
+<g id="node8" class="node">
+<title>eth_send</title>
+<path fill="#78350f" stroke="#fbbf24" d="M631,-232C631,-232 548,-232 548,-232 542,-232 536,-226 536,-220 536,-220 536,-208 536,-208 536,-202 542,-196 548,-196 548,-196 631,-196 631,-196 637,-196 643,-202 643,-208 643,-208 643,-220 643,-220 643,-226 637,-232 631,-232"/>
+<text text-anchor="middle" x="589.5" y="-211.8" font-family="monospace" font-size="9.00" fill="#fbbf24">eth_sendTx (写入)</text>
+</g>
+<!-- plan&#45;&gt;eth_send -->
+<g id="edge4" class="edge">
+<title>plan&#45;&gt;eth_send</title>
+<path fill="none" stroke="#fb7185" stroke-width="2" d="M388,-229.68C388,-221.21 388,-213 388,-213 388,-213 528.77,-213 528.77,-213"/>
+<polygon fill="#fb7185" stroke="#fb7185" stroke-width="2" points="528.77,-215.45 535.77,-213 528.77,-210.55 528.77,-215.45"/>
+<text text-anchor="middle" x="485.5" y="-221.6" font-family="monospace" font-size="8.00">写入</text>
+</g>
+<!-- parse -->
+<g id="node6" class="node">
+<title>parse</title>
+<path fill="#064e3b" stroke="#34d399" d="M148.5,-324C148.5,-324 86.5,-324 86.5,-324 80.5,-324 74.5,-318 74.5,-312 74.5,-312 74.5,-300 74.5,-300 74.5,-294 80.5,-288 86.5,-288 86.5,-288 148.5,-288 148.5,-288 154.5,-288 160.5,-294 160.5,-300 160.5,-300 160.5,-312 160.5,-312 160.5,-318 154.5,-324 148.5,-324"/>
+<text text-anchor="middle" x="117.5" y="-303.8" font-family="monospace" font-size="9.00" fill="#34d399">AI 解析结果</text>
+</g>
+<!-- parse&#45;&gt;review -->
+<g id="edge9" class="edge">
+<title>parse&#45;&gt;review</title>
+<path fill="none" stroke="#34d399" stroke-dasharray="5,2" d="M160.68,-307C176.68,-307 191,-307 191,-307 191,-307 191,-162 191,-162 191,-162 337.77,-162 337.77,-162"/>
+<polygon fill="#34d399" stroke="#34d399" points="337.77,-164.45 344.77,-162 337.77,-159.55 337.77,-164.45"/>
+<text text-anchor="middle" x="279" y="-191.6" font-family="monospace" font-size="8.00">生成说明</text>
+</g>
+<!-- eth_call&#45;&gt;parse -->
+<g id="edge5" class="edge">
+<title>eth_call&#45;&gt;parse</title>
+<path fill="none" stroke="#fbbf24" d="M540.82,-277C420.35,-277 118,-277 118,-277 118,-277 118,-280.8 118,-280.8"/>
+<polygon fill="#fbbf24" stroke="#fbbf24" points="115.55,-280.8 118,-287.8 120.45,-280.8 115.55,-280.8"/>
+<text text-anchor="middle" x="388" y="-312.6" font-family="monospace" font-size="8.00">结果</text>
+</g>
+<!-- eth_send&#45;&gt;wallet -->
+<g id="edge6" class="edge">
+<title>eth_send&#45;&gt;wallet</title>
+<path fill="none" stroke="#fb7185" stroke-width="2" d="M542,-195.92C542,-152.9 542,-48 542,-48 542,-48 442.04,-48 442.04,-48"/>
+<polygon fill="#fb7185" stroke="#fb7185" stroke-width="2" points="442.04,-45.55 435.04,-48 442.04,-50.45 442.04,-45.55"/>
+<text text-anchor="middle" x="485.5" y="-136.6" font-family="monospace" font-size="8.00">需签名</text>
+</g>
+<!-- block -->
+<g id="node10" class="node">
+<title>block</title>
+<path fill="#4c1d95" stroke="#a78bfa" d="M837,-60C837,-60 775,-60 775,-60 769,-60 763,-54 763,-48 763,-48 763,-36 763,-36 763,-30 769,-24 775,-24 775,-24 837,-24 837,-24 843,-24 849,-30 849,-36 849,-36 849,-48 849,-48 849,-54 843,-60 837,-60"/>
+<text text-anchor="middle" x="806" y="-44.8" font-family="monospace" font-size="9.00" fill="#a78bfa">区块验证</text>
+<text text-anchor="middle" x="806" y="-34.8" font-family="monospace" font-size="9.00" fill="#a78bfa">tx hash</text>
+</g>
+<!-- txsubmit&#45;&gt;block -->
+<g id="edge8" class="edge">
+<title>txsubmit&#45;&gt;block</title>
+<path fill="none" stroke="#a78bfa" d="M632.53,-42C632.53,-42 755.68,-42 755.68,-42"/>
+<polygon fill="#a78bfa" stroke="#a78bfa" points="755.68,-44.45 762.68,-42 755.68,-39.55 755.68,-44.45"/>
+<text text-anchor="middle" x="703" y="-48.6" font-family="monospace" font-size="8.00">区块确认</text>
+</g>
+<!-- L1 -->
+<g id="node11" class="node">
+<title>L1</title>
+<path fill="#083344" stroke="#22d3ee" d="M148,-648C148,-648 87,-648 87,-648 81,-648 75,-642 75,-636 75,-636 75,-624 75,-624 75,-618 81,-612 87,-612 87,-612 148,-612 148,-612 154,-612 160,-618 160,-624 160,-624 160,-636 160,-636 160,-642 154,-648 148,-648"/>
+<text text-anchor="middle" x="117.5" y="-628.1" font-family="monospace" font-size="8.00" fill="#22d3ee">👤 人工</text>
+</g>
+<!-- L2 -->
+<g id="node12" class="node">
+<title>L2</title>
+<path fill="#064e3b" stroke="#34d399" d="M138,-590C138,-590 97,-590 97,-590 91,-590 85,-584 85,-578 85,-578 85,-566 85,-566 85,-560 91,-554 97,-554 97,-554 138,-554 138,-554 144,-554 150,-560 150,-566 150,-566 150,-578 150,-578 150,-584 144,-590 138,-590"/>
+<text text-anchor="middle" x="117.5" y="-570.1" font-family="monospace" font-size="8.00" fill="#34d399">🤖 AI</text>
+</g>
+<!-- L3 -->
+<g id="node13" class="node">
+<title>L3</title>
+<path fill="#78350f" stroke="#fbbf24" d="M138,-532C138,-532 97,-532 97,-532 91,-532 85,-526 85,-520 85,-520 85,-508 85,-508 85,-502 91,-496 97,-496 97,-496 138,-496 138,-496 144,-496 150,-502 150,-508 150,-508 150,-520 150,-520 150,-526 144,-532 138,-532"/>
+<text text-anchor="middle" x="117.5" y="-512.1" font-family="monospace" font-size="8.00" fill="#fbbf24">🔧 RPC</text>
+</g>
+<!-- L4 -->
+<g id="node14" class="node">
+<title>L4</title>
+<path fill="#881337" stroke="#fb7185" d="M148,-470C148,-470 87,-470 87,-470 81,-470 75,-464 75,-458 75,-458 75,-446 75,-446 75,-440 81,-434 87,-434 87,-434 148,-434 148,-434 154,-434 160,-440 160,-446 160,-446 160,-458 160,-458 160,-464 154,-470 148,-470"/>
+<path fill="none" stroke="#fb7185" d="M152,-474C152,-474 83,-474 83,-474 77,-474 71,-468 71,-462 71,-462 71,-442 71,-442 71,-436 77,-430 83,-430 83,-430 152,-430 152,-430 158,-430 164,-436 164,-442 164,-442 164,-462 164,-462 164,-468 158,-474 152,-474"/>
+<text text-anchor="middle" x="117.5" y="-450.1" font-family="monospace" font-size="8.00" fill="#fb7185">💳 签名</text>
+</g>
+<!-- L5 -->
+<g id="node15" class="node">
+<title>L5</title>
+<path fill="#4c1d95" stroke="#a78bfa" d="M144,-408C144,-408 91,-408 91,-408 85,-408 79,-402 79,-396 79,-396 79,-384 79,-384 79,-378 85,-372 91,-372 91,-372 144,-372 144,-372 150,-372 156,-378 156,-384 156,-384 156,-396 156,-396 156,-402 150,-408 144,-408"/>
+<text text-anchor="middle" x="117.5" y="-388.1" font-family="monospace" font-size="8.00" fill="#a78bfa">⛓️ 链上</text>
+</g>
+<!-- risk -->
+<g id="node16" class="node">
+<title>risk</title>
+<polygon fill="#881337" stroke="#fb7185" points="217,-774 18,-774 18,-694 217,-694 217,-774"/>
+<text text-anchor="middle" x="117.5" y="-745.6" font-family="monospace" font-size="8.00" fill="#fda4af">AI幻觉·错误参数</text>
+<text text-anchor="middle" x="117.5" y="-736.6" font-family="monospace" font-size="8.00" fill="#fda4af">签名被盗·恶意交易</text>
+<text text-anchor="middle" x="117.5" y="-727.6" font-family="monospace" font-size="8.00" fill="#fda4af">交易不可逆</text>
+<text text-anchor="middle" x="117.5" y="-718.6" font-family="monospace" font-size="8.00" fill="#fda4af">Gas浪费</text>
+</g>
+<!-- principle -->
+<g id="node17" class="node">
+<title>principle</title>
+<polygon fill="#064e3b" stroke="#34d399" points="196,-891.5 39,-891.5 39,-820.5 196,-820.5 196,-891.5"/>
+<text text-anchor="middle" x="117.5" y="-863.1" font-family="monospace" font-size="8.00" fill="#6ee7b7">只读优先</text>
+<text text-anchor="middle" x="117.5" y="-854.1" font-family="monospace" font-size="8.00" fill="#6ee7b7">写入必须人工</text>
+<text text-anchor="middle" x="117.5" y="-845.1" font-family="monospace" font-size="8.00" fill="#6ee7b7">先测试后主网</text>
+</g>
+</g>
+</svg>
 
-      <defs>
-        <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0, 8 3, 0 6" fill="#475669"/>
-        </marker>
-        <marker id="arr-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0, 8 3, 0 6" fill="#34d399"/>
-        </marker>
-        <marker id="arr-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0, 8 3, 0 6" fill="#fbbf24"/>
-        </marker>
-        <marker id="arr-rose" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0, 8 3, 0 6" fill="#fb7185"/>
-        </marker>
-        <marker id="arr-violet" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0, 8 3, 0 6" fill="#a78bfa"/>
-        </marker>
-        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
-        </pattern>
-      </defs>
-
-      <rect width="100%" height="100%" fill="url(#grid)"/>
-
-      <!-- ========== BACKGROUNDS ========== -->
-      <!-- Human band (top) -->
-      <rect x="0" y="0" width="1100" height="55" fill="rgba(34,211,238,0.04)"/>
-      <text x="15" y="18" fill="#22d3ee" font-size="10" font-weight="700">👤 人工</text>
-      <text x="15" y="32" fill="#475669" font-size="8">发起任务 · 复核方案 · 点击钱包确认</text>
-
-      <!-- AI band (middle) -->
-      <rect x="0" y="55" width="1100" height="130" fill="rgba(52,211,153,0.04)"/>
-      <text x="15" y="73" fill="#34d399" font-size="10" font-weight="700">🤖 AI Agent</text>
-      <text x="15" y="87" fill="#475669" font-size="8">理解意图 · 规划工具 · ReAct 循环 · 解析结果 · 生成说明</text>
-
-      <!-- Chain band (bottom) -->
-      <rect x="0" y="185" width="1100" height="95" fill="rgba(167,139,250,0.04)"/>
-      <text x="15" y="203" fill="#a78bfa" font-size="10" font-weight="700">⛓️ 链上</text>
-      <text x="15" y="217" fill="#475669" font-size="8">RPC 调用 · 合约执行 · 交易打包 · 状态确认</text>
-
-      <!-- Band dividers -->
-      <line x1="0" y1="55" x2="1100" y2="55" stroke="#1e293b" stroke-width="1"/>
-      <line x1="0" y1="185" x2="1100" y2="185" stroke="#1e293b" stroke-width="1"/>
-
-      <!-- ========== STEP NODES ========== -->
-      <!-- STEP 1: 发起任务 (Human) -->
-      <circle cx="65" cy="27" r="11" fill="rgba(8,51,68,0.8)" stroke="#22d3ee" stroke-width="2"/>
-      <text x="65" y="31" fill="white" font-size="11" font-weight="700" text-anchor="middle">1</text>
-      <rect x="30" y="40" width="70" height="13" rx="4" fill="rgba(8,51,68,0.8)" stroke="#22d3ee" stroke-width="1"/>
-      <text x="65" y="50" fill="#22d3ee" font-size="9" font-weight="600" text-anchor="middle">用户发起</text>
-
-      <!-- Arrow 1→2 -->
-      <line x1="100" y1="27" x2="132" y2="27" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arr)"/>
-      <text x="116" y="20" fill="#475669" font-size="8">HTTP/对话</text>
-
-      <!-- STEP 2: AI 理解 (AI Band) -->
-      <circle cx="150" cy="100" r="11" fill="rgba(6,78,59,0.8)" stroke="#34d399" stroke-width="2"/>
-      <text x="150" y="104" fill="white" font-size="11" font-weight="700" text-anchor="middle">2</text>
-      <rect x="115" y="113" width="70" height="13" rx="4" fill="rgba(6,78,59,0.8)" stroke="#34d399" stroke-width="1"/>
-      <text x="150" y="123" fill="#34d399" font-size="9" font-weight="600" text-anchor="middle">AI 理解任务</text>
-
-      <!-- Arrow 2→3 -->
-      <line x1="185" y1="100" x2="215" y2="100" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-green)"/>
-      <text x="200" y="93" fill="#475669" font-size="8">意图+规划</text>
-
-      <!-- STEP 3: AI 规划工具 (AI Band) -->
-      <circle cx="233" cy="100" r="11" fill="rgba(6,78,59,0.8)" stroke="#34d399" stroke-width="2"/>
-      <text x="233" y="104" fill="white" font-size="11" font-weight="700" text-anchor="middle">3</text>
-      <rect x="198" y="113" width="70" height="13" rx="4" fill="rgba(6,78,59,0.8)" stroke="#34d399" stroke-width="1"/>
-      <text x="233" y="123" fill="#34d399" font-size="9" font-weight="600" text-anchor="middle">AI 规划工具</text>
-
-      <!-- Branch arrows from step 3 -->
-      <!-- eth_call branch (up) -->
-      <line x1="244" y1="88" x2="244" y2="55" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arr-amber)"/>
-      <line x1="244" y1="55" x2="290" y2="55" stroke="#fbbf24" stroke-width="1.5"/>
-      <text x="250" y="72" fill="#fbbf24" font-size="8">eth_call</text>
-
-      <!-- eth_sendTx branch (down to chain) -->
-      <line x1="268" y1="113" x2="268" y2="165" stroke="#fb7185" stroke-width="1.5" marker-end="url(#arr-rose)"/>
-      <line x1="268" y1="165" x2="380" y2="165" stroke="#fb7185" stroke-width="1.5"/>
-      <text x="275" y="142" fill="#fb7185" font-size="8">eth_sendTx</text>
-
-      <!-- STEP 4: eth_call (top band - read) -->
-      <circle cx="308" cy="27" r="11" fill="rgba(120,53,15,0.8)" stroke="#fbbf24" stroke-width="2"/>
-      <text x="308" y="31" fill="white" font-size="11" font-weight="700" text-anchor="middle">4a</text>
-      <rect x="273" y="40" width="70" height="13" rx="4" fill="rgba(120,53,15,0.8)" stroke="#fbbf24" stroke-width="1"/>
-      <text x="308" y="50" fill="#fbbf24" font-size="9" font-weight="600" text-anchor="middle">eth_call</text>
-      <text x="308" y="11" fill="#475669" font-size="8" text-anchor="middle">只读·不签名·不付 Gas</text>
-
-      <!-- Arrow eth_call → Step 5 -->
-      <line x1="343" y1="27" x2="370" y2="27" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arr-amber)"/>
-
-      <!-- STEP 4b: eth_sendTx (chain band - write) -->
-      <circle cx="398" cy="230" r="11" fill="rgba(120,53,15,0.8)" stroke="#fbbf24" stroke-width="2"/>
-      <text x="398" y="234" fill="white" font-size="11" font-weight="700" text-anchor="middle">4b</text>
-      <rect x="363" y="243" width="70" height="13" rx="4" fill="rgba(120,53,15,0.8)" stroke="#fbbf24" stroke-width="1"/>
-      <text x="398" y="253" fill="#fbbf24" font-size="9" font-weight="600" text-anchor="middle">eth_sendTx</text>
-      <text x="398" y="215" fill="#fbbf24" font-size="8" text-anchor="middle">写入·需签名·付 Gas</text>
-
-      <!-- Arrow eth_sendTx → wallet signature -->
-      <line x1="433" y1="230" x2="460" y2="230" stroke="#fb7185" stroke-width="1.5" marker-end="url(#arr-rose)"/>
-      <text x="446" y="222" fill="#fb7185" font-size="8">→</text>
-
-      <!-- STEP 5: 人工复核 (Human band) -->
-      <circle cx="455" cy="27" r="11" fill="rgba(8,51,68,0.8)" stroke="#22d3ee" stroke-width="2"/>
-      <text x="455" y="31" fill="white" font-size="11" font-weight="700" text-anchor="middle">5</text>
-      <rect x="420" y="40" width="70" height="13" rx="4" fill="rgba(8,51,68,0.8)" stroke="#22d3ee" stroke-width="1"/>
-      <text x="455" y="50" fill="#22d3ee" font-size="9" font-weight="600" text-anchor="middle">人工复核</text>
-      <!-- must-human tag -->
-      <rect x="418" y="8" width="54" height="13" rx="3" fill="rgba(34,211,238,0.15)" stroke="#22d3ee" stroke-width="1"/>
-      <text x="445" y="18" fill="#22d3ee" font-size="8" font-weight="600" text-anchor="middle">⚠ 必须人工</text>
-
-      <!-- Arrow Step 5 → Step 6 (wallet confirm) -->
-      <line x1="490" y1="27" x2="515" y2="27" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arr)"/>
-      <text x="502" y="20" fill="#475669" font-size="8">确认</text>
-
-      <!-- STEP 6: 钱包签名确认 (Human band) -->
-      <circle cx="533" cy="27" r="11" fill="rgba(136,19,55,0.8)" stroke="#fb7185" stroke-width="2"/>
-      <text x="533" y="31" fill="white" font-size="11" font-weight="700" text-anchor="middle">6</text>
-      <rect x="498" y="40" width="70" height="13" rx="4" fill="rgba(136,19,55,0.8)" stroke="#fb7185" stroke-width="1"/>
-      <text x="533" y="50" fill="#fb7185" font-size="9" font-weight="600" text-anchor="middle">钱包确认</text>
-      <!-- signature risk tag -->
-      <rect x="496" y="8" width="52" height="13" rx="3" fill="rgba(136,19,55,0.3)" stroke="#fb7185" stroke-width="1"/>
-      <text x="522" y="18" fill="#fb7185" font-size="8" font-weight="600" text-anchor="middle">⚠ 钱包签名</text>
-
-      <!-- Arrow Step 6 → Step 7 -->
-      <line x1="568" y1="27" x2="590" y2="27" stroke="#fb7185" stroke-width="1.5" marker-end="url(#arr-rose)"/>
-      <text x="579" y="20" fill="#475669" font-size="8">tx</text>
-
-      <!-- Arrow eth_sendTx result up to Step 7 (tx submitted to chain) -->
-      <line x1="460" y1="165" x2="590" y2="165" stroke="#fb7185" stroke-width="1.5"/>
-      <line x1="590" y1="165" x2="590" y2="195" stroke="#fb7185" stroke-width="1.5" marker-end="url(#arr-rose)"/>
-
-      <!-- STEP 7: 交易上链 (Chain band) -->
-      <circle cx="608" cy="230" r="11" fill="rgba(76,29,149,0.8)" stroke="#a78bfa" stroke-width="2"/>
-      <text x="608" y="234" fill="white" font-size="11" font-weight="700" text-anchor="middle">7</text>
-      <rect x="573" y="243" width="70" height="13" rx="4" fill="rgba(76,29,149,0.8)" stroke="#a78bfa" stroke-width="1"/>
-      <text x="608" y="253" fill="#a78bfa" font-size="9" font-weight="600" text-anchor="middle">交易上链</text>
-      <text x="608" y="215" fill="#475669" font-size="8" text-anchor="middle">等待区块确认</text>
-
-      <!-- Arrow Step 7 → Step 8 -->
-      <line x1="643" y1="230" x2="668" y2="230" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arr-violet)"/>
-
-      <!-- STEP 8: 区块验证 (Chain band) -->
-      <circle cx="686" cy="230" r="11" fill="rgba(76,29,149,0.8)" stroke="#a78bfa" stroke-width="2"/>
-      <text x="686" y="234" fill="white" font-size="11" font-weight="700" text-anchor="middle">8</text>
-      <rect x="651" y="243" width="70" height="13" rx="4" fill="rgba(76,29,149,0.8)" stroke="#a78bfa" stroke-width="1"/>
-      <text x="686" y="253" fill="#a78bfa" font-size="9" font-weight="600" text-anchor="middle">区块验证</text>
-      <text x="686" y="215" fill="#c4b5fd" font-size="8" text-anchor="middle">tx hash → 浏览器</text>
-
-      <!-- AI parses result → Step 5 (back to human) -->
-      <!-- eth_call result going to AI parse -->
-      <line x1="370" y1="27" x2="400" y2="27" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,3"/>
-      <text x="380" y="20" fill="#475669" font-size="8">结果</text>
-
-      <!-- AI result text (step 4→AI解析→human explanation) -->
-      <text x="415" y="100" fill="#34d399" font-size="9" font-weight="600">AI 解析结果</text>
-      <text x="415" y="113" fill="#475669" font-size="8">解码·格式化</text>
-      <line x1="415" y1="55" x2="415" y2="70" stroke="#34d399" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="415" y1="70" x2="455" y2="70" stroke="#34d399" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="455" y1="70" x2="455" y2="40" stroke="#34d399" stroke-width="1"/>
-      <text x="428" y="67" fill="#34d399" font-size="8">生成说明</text>
-
-      <!-- ========== LEGEND ========== -->
-      <rect x="730" y="75" width="350" height="185" rx="8" fill="rgba(15,23,42,0.9)" stroke="#1e293b" stroke-width="1"/>
-      <text x="748" y="94" fill="white" font-size="9" font-weight="700">图例</text>
-
-      <!-- Row 1 -->
-      <rect x="748" y="104" width="12" height="12" rx="3" fill="rgba(8,51,68,0.8)" stroke="#22d3ee" stroke-width="1.5"/>
-      <text x="766" y="114" fill="#94a3b8" font-size="8">人工节点（发起/复核/签名）</text>
-
-      <rect x="748" y="122" width="12" height="12" rx="3" fill="rgba(6,78,59,0.8)" stroke="#34d399" stroke-width="1.5"/>
-      <text x="766" y="132" fill="#94a3b8" font-size="8">AI Agent 节点（理解/规划/解析）</text>
-
-      <!-- Row 2 -->
-      <rect x="748" y="146" width="12" height="12" rx="3" fill="rgba(120,53,15,0.8)" stroke="#fbbf24" stroke-width="1.5"/>
-      <text x="766" y="156" fill="#94a3b8" font-size="8">RPC 工具（eth_call / eth_sendTx）</text>
-
-      <rect x="748" y="164" width="12" height="12" rx="3" fill="rgba(136,19,55,0.8)" stroke="#fb7185" stroke-width="1.5"/>
-      <text x="766" y="174" fill="#94a3b8" font-size="8">钱包签名（风险节点）</text>
-
-      <!-- Row 3 -->
-      <rect x="748" y="188" width="12" height="12" rx="3" fill="rgba(76,29,149,0.8)" stroke="#a78bfa" stroke-width="1.5"/>
-      <text x="766" y="198" fill="#94a3b8" font-size="8">链上验证（交易/区块）</text>
-
-      <rect x="748" y="206" width="12" height="12" rx="3" fill="rgba(34,211,238,0.15)" stroke="#22d3ee" stroke-width="1"/>
-      <text x="766" y="216" fill="#94a3b8" font-size="8">必须人工确认</text>
-
-      <!-- Row 4: arrow types -->
-      <line x1="748" y1="238" x2="762" y2="238" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arr)"/>
-      <text x="768" y="242" fill="#94a3b8" font-size="8">人工 → AI</text>
-
-      <line x1="848" y1="238" x2="862" y2="238" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-green)"/>
-      <text x="868" y="242" fill="#94a3b8" font-size="8">AI 内部</text>
-
-      <line x1="918" y1="238" x2="932" y2="238" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arr-amber)"/>
-      <text x="938" y="242" fill="#94a3b8" font-size="8">只读 RPC</text>
-
-      <line x1="748" y1="256" x2="762" y2="256" stroke="#fb7185" stroke-width="1.5" marker-end="url(#arr-rose)"/>
-      <text x="768" y="260" fill="#94a3b8" font-size="8">写入 RPC</text>
-
-      <line x1="848" y1="256" x2="862" y2="256" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arr-violet)"/>
-      <text x="868" y="260" fill="#94a3b8" font-size="8">链上反馈</text>
-
-      <!-- ========== RISK CALLOUTS (right side) ========== -->
-      <rect x="730" y="14" width="155" height="52" rx="6" fill="rgba(136,19,55,0.2)" stroke="#fb7185" stroke-width="1"/>
-      <text x="740" y="30" fill="#fb7185" font-size="8" font-weight="700">⚠ 主要风险</text>
-      <text x="740" y="42" fill="#fda4af" font-size="7">AI 幻觉·签名被盗</text>
-      <text x="740" y="53" fill="#fda4af" font-size="7">交易不可逆·Gas 浪费</text>
-      <text x="740" y="64" fill="#fda4af" font-size="7">权限过度·重放攻击</text>
-
-      <!-- Key principle callout -->
-      <rect x="900" y="14" width="185" height="52" rx="6" fill="rgba(52,211,153,0.1)" stroke="#34d399" stroke-width="1"/>
-      <text x="910" y="30" fill="#34d399" font-size="8" font-weight="700">✓ 核心原则</text>
-      <text x="910" y="42" fill="#6ee7b7" font-size="7">只读优先，能 eth_call 就不写入</text>
-      <text x="910" y="53" fill="#6ee7b7" font-size="7">写入必须人工，钱包确认不可跳过</text>
-      <text x="910" y="64" fill="#6ee7b7" font-size="7">先测试网，后主网</text>
-
-    </svg>
   </div>
 
-  <!-- Info Cards -->
   <div class="cards">
-
     <div class="card">
-      <div class="card-header">
-        <div class="card-dot" style="background:#22d3ee;"></div>
-        <h3>1 · 谁发起 / 谁执行</h3>
-      </div>
+      <h3><span class="dot" style="background:#22d3ee"></span>1 · 谁发起 / 谁执行</h3>
       <ul>
         <li>👤 发起：人工（用户 / 管理员）</li>
         <li>🤖 规划：AI Agent（意图识别、ReAct 循环）</li>
@@ -316,12 +266,8 @@
         <li>⛓️ 确认：区块链（合约执行、交易打包）</li>
       </ul>
     </div>
-
     <div class="card">
-      <div class="card-header">
-        <div class="card-dot" style="background:#fbbf24;"></div>
-        <h3>2 · 哪些步骤需要钱包签名</h3>
-      </div>
+      <h3><span class="dot" style="background:#fbbf24"></span>2 · 哪些步骤需要钱包签名</h3>
       <ul>
         <li>eth_call（只读）：不签名，不付 Gas ✅</li>
         <li>eth_sendTx（写入）：必须私钥签名 ⚠️</li>
@@ -330,63 +276,45 @@
         <li>写入需支付 Gas Fee（测试网免费）</li>
       </ul>
     </div>
-
     <div class="card">
-      <div class="card-header">
-        <div class="card-dot" style="background:#22d3ee;"></div>
-        <h3>3 · 哪些步骤必须人工确认</h3>
-      </div>
+      <h3><span class="dot" style="background:#22d3ee"></span>3 · 哪些步骤必须人工确认</h3>
       <ul>
-        <li>Step 5：人工复核 AI 生成的方案 / 说明</li>
-        <li>Step 6：钱包内主动点击"确认"（MetaMask 等）</li>
+        <li>Step 2：人工复核 AI 生成的方案</li>
+        <li>Step 3：钱包内主动点击"确认"（MetaMask 等）</li>
         <li>Human-in-the-loop 是唯一防 AI 乱操作的屏障</li>
         <li>只读流程可设计为自动，写入绝对不行</li>
       </ul>
     </div>
-
     <div class="card">
-      <div class="card-header">
-        <div class="card-dot" style="background:#a78bfa;"></div>
-        <h3>4 · 如何验证最终结果</h3>
-      </div>
+      <h3><span class="dot" style="background:#a78bfa"></span>4 · 如何验证最终结果</h3>
       <ul>
         <li>只读：AI 解码返回值，人工确认内容正确</li>
         <li>交易：拿 tx hash 到区块浏览器查状态</li>
-        <li>验证内容：Block Number、Status（Success/Fail）、Gas</li>
+        <li>验证内容：Block Number、Status、Gas Used</li>
         <li>浏览器：Etherscan · OKLink · Blockscout</li>
         <li>测试网：Sepolia / Base Sepolia / BSC Testnet</li>
       </ul>
     </div>
-
     <div class="card">
-      <div class="card-header">
-        <div class="card-dot" style="background:#fb7185;"></div>
-        <h3>5 · 主要风险点</h3>
-      </div>
+      <h3><span class="dot" style="background:#fb7185"></span>5 · 主要风险点</h3>
       <ul>
         <li>🤖 AI 幻觉：给出错误的合约调用参数</li>
         <li>🔑 签名被盗：恶意 dApp 引导签名恶意交易</li>
         <li>⛓️ 交易不可逆：写入确认后无法回滚</li>
         <li>💸 Gas 浪费：失败交易仍需支付 Gas</li>
         <li>🔗 重放攻击：同一 nonce 被重复提交</li>
-        <li>📋 权限过度：Session Key 授权额度过大</li>
       </ul>
     </div>
-
     <div class="card">
-      <div class="card-header">
-        <div class="card-dot" style="background:#34d399;"></div>
-        <h3>6 · AI / Agent 辅助了哪些步骤</h3>
-      </div>
+      <h3><span class="dot" style="background:#34d399"></span>6 · AI / Agent 辅助了哪些步骤</h3>
       <ul>
-        <li>Step 2：理解用户意图，拆解任务目标</li>
-        <li>Step 3：规划用哪些工具（只读 vs 写入）</li>
-        <li>Step 4：解码 RPC 返回结果，格式化说明</li>
+        <li>Step 1：理解用户意图，拆解任务目标</li>
+        <li>Step 2：规划用哪些工具（只读 vs 写入）</li>
+        <li>Step 3：解码 RPC 返回结果，格式化说明</li>
         <li>全程：生成人类可读的操作说明 / 风险提示</li>
         <li>⚠ AI 不能发起交易、不能签名、不能访问私钥</li>
       </ul>
     </div>
-
   </div>
 
   <p class="footer">AI × Web3 School · 最小工作流示意图 · 基于 Handbook Chain-aware Context & Web3 Tool Use</p>
