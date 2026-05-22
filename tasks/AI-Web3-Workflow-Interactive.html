@@ -5,182 +5,402 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI × Web3 工作流</title>
 <style>
-body { background: #0f0f1a; margin: 0; padding: 1.5rem; font-family: -apple-system, 'JetBrains Mono', monospace; }
+:root {
+  --bg:           #0d0d1a;
+  --bg-card:      #13132a;
+  --bg-card-alt:  #16163a;
+  --border:       #2a2a5e;
+  --cyan:         #22d3ee;
+  --cyan-bg:      rgba(34,211,238,0.08);
+  --green:        #34d399;
+  --green-bg:     rgba(52,211,153,0.08);
+  --orange:       #fbbf24;
+  --orange-bg:    rgba(251,191,36,0.08);
+  --red:          #fb7185;
+  --red-bg:       rgba(251,113,133,0.08);
+  --purple:       #a78bfa;
+  --purple-bg:    rgba(167,139,250,0.08);
+  --text:         #e2e8f0;
+  --text-sub:     #64748b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, 'JetBrains Mono', monospace;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+}
+.container { max-width: 820px; margin: 0 auto; }
+
+/* ── Header ── */
+.header { margin-bottom: 2rem; }
+.header h1 { font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+.header p { color: var(--text-sub); font-size: 0.75rem; margin-top: 0.4rem; }
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  font-size: 0.72rem;
+}
+.legend-item { display: flex; align-items: center; gap: 0.4rem; color: var(--text-sub); }
+.legend-dot {
+  width: 9px; height: 9px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.legend-dot.cyan    { background: var(--cyan-bg);    border: 1px solid var(--cyan); }
+.legend-dot.green   { background: var(--green-bg);   border: 1px solid var(--green); }
+.legend-dot.orange  { background: var(--orange-bg);  border: 1px solid var(--orange); }
+.legend-dot.red     { background: var(--red-bg);     border: 1px solid var(--red); }
+.legend-dot.purple  { background: var(--purple-bg);  border: 1px solid var(--purple); }
+
+/* ── Flow ── */
+.flow { display: flex; flex-direction: column; gap: 0; }
+
+/* ── Step row ── */
+.step {
+  display: grid;
+  grid-template-columns: 52px 1fr 90px;
+  gap: 10px;
+  align-items: stretch;
+  min-height: 72px;
+}
+
+/* ── Step label (left column) ── */
+.step-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 14px;
+  gap: 5px;
+}
+.step-num {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  letter-spacing: 0.05em;
+}
+.step-actor {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.actor-h     { background: var(--cyan-bg);    color: var(--cyan);    border: 1px solid var(--cyan); }
+.actor-ai   { background: var(--green-bg);   color: var(--green);   border: 1px solid var(--green); }
+.actor-ch   { background: var(--purple-bg);  color: var(--purple);  border: 1px solid var(--purple); }
+.actor-all  { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid #334; }
+
+/* ── Step card (middle column) ── */
+.step-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  position: relative;
+  overflow: hidden;
+}
+/* left accent bar */
+.step-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: 10px 0 0 10px;
+}
+.card-h::before    { background: var(--cyan); }
+.card-ai::before  { background: var(--green); }
+.card-ch::before  { background: var(--purple); }
+.card-all::before { background: var(--border); }
+
+.step-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.step-sub {
+  font-size: 0.72rem;
+  color: var(--text-sub);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+.step-detail {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  line-height: 1.65;
+}
+
+/* ── Tag ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.tag-h   { background: var(--cyan-bg);    color: var(--cyan);    }
+.tag-w   { background: var(--orange-bg);  color: var(--orange);  }
+.tag-s   { background: var(--green-bg);   color: var(--green);   }
+.tag-i   { background: var(--purple-bg);  color: var(--purple);  }
+.tag-r   { background: var(--red-bg);     color: var(--red);     }
+
+/* ── Risk (right column) ── */
+.step-risk {
+  padding-top: 14px;
+  font-size: 0.68rem;
+  color: var(--red);
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+/* ── Connector arrow ── */
+.connector {
+  display: flex;
+  justify-content: center;
+  padding: 2px 0;
+  height: 20px;
+}
+.connector svg { opacity: 0.5; }
+
+/* ── Branch flow (rpc row) ── */
+.branch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+.branch-label {
+  grid-column: 1 / -1;
+  font-size: 0.65rem;
+  color: var(--text-sub);
+  text-align: center;
+}
+.branch-card {
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.72rem;
+}
+.branch-card .b-title { font-weight: 600; display: flex; align-items: center; gap: 4px; }
+.branch-card .b-sub   { color: var(--text-sub); font-size: 0.68rem; margin-top: 3px; }
+.branch-card .b-tag   { margin-top: 4px; }
+
+/* ── Wallet signature highlight ── */
+.wallet-card {
+  border-color: var(--red);
+  background: linear-gradient(135deg, var(--bg-card) 60%, var(--red-bg));
+}
+
+/* ── Footer ── */
+.footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.68rem;
+  color: var(--text-sub);
+}
 </style>
 </head>
 <body>
-<h2 style="color:#e2e8f0;font-size:1rem;margin:0 0 1rem 0">AI × Web3 最小工作流</h2>
-<style>
-:root {
-  --color-background-primary:   #1e1e2e;
-  --color-background-secondary: #2a2a3e;
-  --color-background-info:      #1a3a5c;
-  --color-background-warning:   #3a2a0a;
-  --color-background-success:    #1a3a2a;
-  --color-background-danger:     #3a1a1a;
-  --color-border-primary:        #4a4a6e;
-  --color-border-secondary:       #3a3a5e;
-  --color-border-tertiary:       #2a2a4e;
-  --color-border-info:           #3a6a9c;
-  --color-border-warning:        #6a5a2a;
-  --color-border-success:        #2a5a3a;
-  --color-text-primary:          #e2e8f0;
-  --color-text-secondary:        #94a3b8;
-  --color-text-tertiary:         #64748b;
-  --color-text-info:             #60a5fa;
-  --color-text-warning:          #fbbf24;
-  --color-text-success:          #34d399;
-  --color-text-danger:           #fb7185;
-  --border-radius-md: 6px;
-}
-body { background: #0f0f1a; margin: 0; padding: 1.5rem; font-family: monospace; }
-.fw{padding:1rem 0 1.5rem}
-.leg{display:flex;flex-wrap:wrap;gap:10px 16px;margin-bottom:1.25rem;padding-bottom:12px;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
-.li{display:flex;align-items:center;gap:5px;color:var(--color-text-secondary)}
-.ld{width:9px;height:9px;border-radius:2px;flex-shrink:0;border:0.5px solid transparent}
-.flow{display:flex;flex-direction:column}
-.sr{display:grid;grid-template-columns:72px 1fr 118px;gap:8px;align-items:start}
-.sb{display:flex;flex-direction:column;align-items:center;gap:5px;padding-top:10px}
-.sn{font-size:10px;color:var(--color-text-tertiary);font-weight:500;letter-spacing:.04em}
-.ab{font-size:10px;font-weight:500;padding:3px 6px;border-radius:4px;text-align:center;line-height:1.45;white-space:nowrap}
-.ab-ai{background:var(--color-background-info);color:var(--color-text-info)}
-.ab-h{background:var(--color-background-warning);color:var(--color-text-warning)}
-.ab-ch{background:var(--color-background-success);color:var(--color-text-success)}
-.ab-all{background:var(--color-background-secondary);color:var(--color-text-secondary)}
-.sc{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;cursor:pointer;background:var(--color-background-primary);transition:border-color .15s,background .15s}
-.sc:hover{border-color:var(--color-border-secondary)}
-.sc.open{border-color:var(--color-border-primary);background:var(--color-background-secondary)}
-.st{font-size:13px;font-weight:500;color:var(--color-text-primary);display:flex;align-items:center;gap:6px;flex-wrap:wrap;line-height:1.4}
-.ss{font-size:11px;color:var(--color-text-secondary);margin-top:3px;line-height:1.4}
-.sd{font-size:12px;color:var(--color-text-secondary);margin-top:8px;padding-top:8px;border-top:0.5px solid var(--color-border-tertiary);display:none;line-height:1.65}
-.sc.open .sd{display:block}
-.tg{font-size:9px;padding:2px 5px;border-radius:3px;font-weight:500;white-space:nowrap;line-height:1.5}
-.tg-r{background:var(--color-background-danger);color:var(--color-text-danger)}
-.tg-w{background:var(--color-background-warning);color:var(--color-text-warning)}
-.tg-s{background:var(--color-background-success);color:var(--color-text-success)}
-.tg-i{background:var(--color-background-info);color:var(--color-text-info)}
-.rk{font-size:11px;color:var(--color-text-danger);padding-top:10px;line-height:1.5}
-.ac{margin-left:80px;height:18px;display:flex;align-items:center}
-.hint{font-size:11px;color:var(--color-text-tertiary);margin-top:1rem;text-align:center}
-</style>
+<div class="container">
 
-<div class="fw">
-  <div class="leg">
-    <div class="li"><div class="ld" style="background:var(--color-background-info);border-color:var(--color-border-info)"></div>AI Agent</div>
-    <div class="li"><div class="ld" style="background:var(--color-background-warning);border-color:var(--color-border-warning)"></div>人工</div>
-    <div class="li"><div class="ld" style="background:var(--color-background-success);border-color:var(--color-border-success)"></div>区块链</div>
-    <div class="li" style="color:var(--color-text-danger)">⚠ 风险点</div>
-    <div class="li">✋ 必须人工确认</div>
-    <div class="li">🔐 钱包签名</div>
+  <div class="header">
+    <h1>最小 AI × Web3 工作流</h1>
+    <p>人工发起 → AI 规划 → RPC 调用 → 钱包签名 → 链上执行 → 区块验证</p>
   </div>
 
-  <div class="flow" id="flow"></div>
-  <div class="hint">点击任意步骤查看详细说明</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot cyan"></div>人工发起 / 复核</div>
+    <div class="legend-item"><div class="legend-dot green"></div>AI Agent</div>
+    <div class="legend-item"><div class="legend-dot purple"></div>区块链</div>
+    <div class="legend-item"><div class="legend-dot orange"></div>RPC 调用</div>
+    <div class="legend-item"><div class="legend-dot red"></div>钱包签名（风险点）</div>
+    <div class="legend-item" style="color:var(--red)">⚠ 风险提示</div>
+  </div>
+
+  <div class="flow">
+
+    <!-- 01 -->
+    <div class="step">
+      <div class="step-label">
+        <span class="step-num">01</span>
+        <span class="step-actor actor-h">👤 人工</span>
+      </div>
+      <div class="step-card card-h">
+        <div class="step-title">用户发起任务</div>
+        <div class="step-sub">"向 Sepolia 合约 0xABCD… 转账 0.05 ETH"</div>
+        <div class="step-detail">人工用自然语言表达目标，这是意图的唯一来源。AI 永远不会自行发起链上交易。</div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#475669" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+
+    <!-- 02 -->
+    <div class="step">
+      <div class="step-label">
+        <span class="step-num">02</span>
+        <span class="step-actor actor-ai">🤖 AI</span>
+      </div>
+      <div class="step-card card-ai">
+        <div class="step-title">解析意图 + 生成调用数据</div>
+        <div class="step-sub">解析合约 ABI → 编码参数 → 估算 Gas</div>
+        <div class="step-detail">Agent 查询合约 ABI，对函数调用进行编码，生成结构化交易对象 {to, value, data, gasLimit, nonce}。此阶段不触碰私钥。</div>
+      </div>
+      <div class="step-risk">⚠ 幻觉风险：函数选择器错误、目标地址错误或金额编码有误</div>
+    </div>
+
+    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#475669" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+
+    <!-- 03 -->
+    <div class="step">
+      <div class="step-label">
+        <span class="step-num">03</span>
+        <span class="step-actor actor-ai">🤖 AI</span>
+      </div>
+      <div class="step-card card-ai">
+        <div class="step-title">生成人类可读的交易摘要</div>
+        <div class="step-sub">通俗语言说明该笔交易将执行的具体操作</div>
+        <div class="step-detail">"本次将向合约 0xABCD… 发送 0.05 ETH，调用 deposit()。Gas 预估 45,000（约 ¥0.85），网络：Sepolia 测试网。" AI 生成摘要是人工复核的主要对象。</div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#475669" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+
+    <!-- 04 – RPC branch -->
+    <div class="step">
+      <div class="step-label">
+        <span class="step-num">04</span>
+        <span class="step-actor actor-ai">🤖 AI</span>
+      </div>
+      <div class="step-card card-ai">
+        <div class="step-title">AI 规划工具 · RPC 调用</div>
+        <div class="step-detail" style="border:none;margin-top:0;padding-top:0">AI 判断用哪个 RPC 方法：</div>
+        <div class="branch">
+          <div class="branch-label">AI → RPC 接口 → 区块链节点</div>
+          <div class="branch-card">
+            <div class="b-title" style="color:var(--orange)">🔧 eth_call（只读）</div>
+            <div class="b-sub">查余额、读合约状态</div>
+            <div class="b-tag"><span class="tag tag-s">✓ 不签名</span> <span class="tag tag-s">✓ 不付 Gas</span></div>
+          </div>
+          <div class="branch-card">
+            <div class="b-title" style="color:var(--red)">🔧 eth_sendTx（写入）</div>
+            <div class="b-sub">写合约、转账</div>
+            <div class="b-tag"><span class="tag tag-w">⚠ 需钱包签名</span> <span class="tag tag-w">⚠ 付 Gas</span></div>
+          </div>
+        </div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#475669" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+
+    <!-- 05 -->
+    <div class="step">
+      <div class="step-label">
+        <span class="step-num">05</span>
+        <span class="step-actor actor-h">👤 人工</span>
+      </div>
+      <div class="step-card card-h">
+        <div class="step-title">人工复核 <span class="tag tag-r" style="margin-left:4px">✋ 必须确认</span></div>
+        <div class="step-sub">逐项核对：地址、金额、函数名、网络、Gas 上限</div>
+        <div class="step-detail">必须将每个字段与原始意图独立比对，不能仅凭 AI 摘要审批。如有任何疑问，立即中止并重新生成。</div>
+      </div>
+      <div class="step-risk">⚠ 审批疲劳：时间压力下容易跳过复核直接点"批准"</div>
+    </div>
+
+    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#475669" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+
+    <!-- 06 – wallet -->
+    <div class="step">
+      <div class="step-label">
+        <span class="step-num">06</span>
+        <span class="step-actor actor-h" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">🔐 钱包</span>
+      </div>
+      <div class="step-card card-h wallet-card">
+        <div class="step-title" style="color:var(--red)">钱包签名确认 <span class="tag tag-w">⚠ AI 无法签名</span></div>
+        <div class="step-sub">MetaMask / Ledger 签名 — AI 被架构强制排除</div>
+        <div class="step-detail">钱包弹出签名请求，用户密码学签名。硬件钱包（Ledger/Trezor）设备屏幕会显示待签数据，请核对交易哈希与复核内容一致。AI Agent 无法访问私钥，被强制排除于此步骤之外。</div>
+      </div>
+      <div class="step-risk">⚠ 剪贴板劫持或钓鱼覆盖层可在此静默替换目标地址</div>
+    </div>
+
+    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#fb7185" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+
+    <!-- 07 -->
+    <div class="step">
+      <div class="step-label">
+        <span class="step-num">07</span>
+        <span class="step-actor actor-ch">⛓️ 链上</span>
+      </div>
+      <div class="step-card card-ch">
+        <div class="step-title">广播至 Sepolia 测试网</div>
+        <div class="step-sub">eth_sendRawTransaction → 立即返回交易哈希</div>
+        <div class="step-detail">已签名交易广播至 Sepolia RPC 节点，立即返回交易哈希（tx hash），但交易尚未确认。此步骤不可逆。</div>
+      </div>
+      <div class="step-risk">⚠ 主网风险：MEV、Gas 飙升或内存池拥堵均可影响结果</div>
+    </div>
+
+    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+
+    <!-- 08 -->
+    <div class="step">
+      <div class="step-label">
+        <span class="step-num">08</span>
+        <span class="step-actor actor-ch">⛓️ 链上</span>
+      </div>
+      <div class="step-card card-ch">
+        <div class="step-title">等待区块确认</div>
+        <div class="step-sub">轮询 eth_getTransactionReceipt → 通常 1-3 个确认</div>
+        <div class="step-detail">Agent 持续轮询确认数。Sepolia 测试网上 1-3 个确认通常已足够。返回 status=0x1（成功）及事件日志的交易收据。AI Agent 只能读取，无法修改。</div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+
+    <!-- 09 -->
+    <div class="step">
+      <div class="step-label">
+        <span class="step-num">09</span>
+        <span class="step-actor actor-all">✅ 完成</span>
+      </div>
+      <div class="step-card card-all">
+        <div class="step-title">在区块浏览器验证结果 <span class="tag tag-i">🔍 唯一可信来源</span></div>
+        <div class="step-sub">sepolia.etherscan.io — 独立核验 status / 地址 / 金额 / 事件日志</div>
+        <div class="step-detail">独立核验：status=Success、to=正确地址、value=正确金额、事件日志与预期合约状态变更一致。区块浏览器是唯一可信来源，即使 AI 报告"成功"，也必须在此处独立确认。</div>
+      </div>
+      <div class="step-risk">⚠ 切勿以 AI"成功"反馈代替浏览器验证</div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    AI × Web3 School · 最小工作流示意图 · 基于 Handbook Chain-aware Context & Web3 Tool Use
+  </div>
 </div>
-
-<script>
-const steps = [
-  {
-    num:'01', actor:'人工', ac:'ab-h',
-    title:'用户发起任务',
-    sub:'"向 Sepolia 测试网合约 0xABCD… 转账 0.05 ETH"',
-    detail:'人工用自然语言表达目标，这是意图的唯一来源。后续所有步骤都必须能追溯回这里。AI 永远不会自行发起交易。',
-    tags:[],
-    risk:''
-  },
-  {
-    num:'02', actor:'AI Agent', ac:'ab-ai',
-    title:'解析意图 + 生成调用数据',
-    sub:'解析合约 ABI、编码参数、估算 Gas',
-    detail:'Agent 查询合约 ABI（或可信注册表），对函数调用进行编码（如 deposit(address, uint256)），并生成结构化交易对象：{to, value, data, gasLimit, nonce}。此阶段不会触碰私钥。',
-    tags:[],
-    risk:'⚠ 幻觉风险：函数选择器错误、目标地址错误或金额编码有误'
-  },
-  {
-    num:'03', actor:'AI Agent', ac:'ab-ai',
-    title:'生成人类可读的交易摘要',
-    sub:'用通俗语言说明该笔交易将执行的具体操作',
-    detail:'"本次交易将从您的钱包向合约 0xABCD… 发送 0.05 ETH，调用 deposit() 函数。Gas 预估：45,000（约 ¥0.85）。网络：Sepolia 测试网。" 此 AI 生成摘要是人工复核的主要对象。',
-    tags:[],
-    risk:''
-  },
-  {
-    num:'04', actor:'人工 ✋', ac:'ab-h',
-    title:'复核 AI 摘要 — 强制关卡',
-    sub:'逐项核对：地址、金额、函数名、网络、Gas 上限',
-    detail:'人工必须将每个字段与原始意图独立比对，不能仅凭 AI 摘要审批，还需交叉核验原始交易字段。这是链上操作前唯一的人工把关点。如有任何疑问，立即中止并重新生成。',
-    tags:[{l:'✋ 必须确认',c:'tg-r'}],
-    risk:'⚠ 审批疲劳：时间压力下，人工容易跳过复核直接点击"批准"'
-  },
-  {
-    num:'05', actor:'人工 🔐', ac:'ab-h',
-    title:'钱包签名',
-    sub:'MetaMask / Ledger 签名 — AI 在架构上被排除在外',
-    detail:'钱包弹出签名请求，由用户进行密码学签名。使用硬件钱包（Ledger/Trezor）时，设备屏幕会显示待签数据，请核对交易哈希与复核内容一致。AI Agent 因架构设计无法访问私钥，被强制排除于此步骤之外。',
-    tags:[{l:'🔐 需要钱包',c:'tg-w'},{l:'AI 无法签名',c:'tg-r'}],
-    risk:'⚠ 剪贴板劫持或钓鱼覆盖层可在此时静默替换目标地址'
-  },
-  {
-    num:'06', actor:'区块链', ac:'ab-ch',
-    title:'广播至 Sepolia 测试网',
-    sub:'eth_sendRawTransaction → 立即返回交易哈希',
-    detail:'已签名的交易被广播至 Sepolia RPC 节点，立即返回交易哈希，但此时交易尚未确认。此步骤不可逆——在主网上，资金从此刻起处于风险状态。',
-    tags:[{l:'链上操作',c:'tg-s'}],
-    risk:'⚠ 主网风险：抢先交易（MEV）、Gas 价格飙升或内存池拥堵均可影响结果'
-  },
-  {
-    num:'07', actor:'区块链', ac:'ab-ch',
-    title:'等待区块确认',
-    sub:'轮询 eth_getTransactionReceipt — 通常需要 12 个确认',
-    detail:'Agent 持续轮询确认数。Sepolia 测试网上，1–3 个确认通常已足够。返回包含 status=0x1（成功）及事件日志的交易收据。AI Agent 只能读取此结果，无法修改。',
-    tags:[{l:'链上操作',c:'tg-s'}],
-    risk:''
-  },
-  {
-    num:'08', actor:'人工 / AI', ac:'ab-all',
-    title:'在区块浏览器验证结果',
-    sub:'sepolia.etherscan.io — 这是唯一权威的真实来源',
-    detail:'独立核验：status=Success、to= 正确地址、value= 正确金额、事件日志与预期合约状态变更一致。区块浏览器是唯一可信来源，即使 AI 报告"成功"，也必须在此处独立确认。',
-    tags:[{l:'验证结果',c:'tg-i'}],
-    risk:'⚠ 切勿以 AI 的"成功"反馈代替验证——浏览器是唯一的无需信任数据源'
-  },
-  {
-    num:'09', actor:'✅ 完成', ac:'ab-all',
-    title:'生成收据 + 审计日志',
-    sub:'永久记录交易哈希、区块号、Gas 消耗、审批人信息',
-    detail:'存储内容：交易哈希、区块号、Gas 消耗量、时间戳、AI 生成摘要、人工审批人身份标识及浏览器链接。区块链提供不可篡改的执行证明，日志保存决策上下文。审计链路完整闭环。',
-    tags:[{l:'已完成',c:'tg-s'}],
-    risk:''
-  }
-];
-
-const flow = document.getElementById('flow');
-
-steps.forEach((s, i) => {
-  const row = document.createElement('div');
-  row.className = 'sr';
-  const tagsHtml = s.tags.map(t => `<span class="tg ${t.c}">${t.l}</span>`).join(' ');
-  const riskHtml = s.risk ? `<div class="rk">${s.risk}</div>` : '';
-  row.innerHTML = `
-    <div class="sb">
-      <span class="sn">${s.num}</span>
-      <span class="ab ${s.ac}">${s.actor}</span>
-    </div>
-    <div class="sc" onclick="this.classList.toggle('open')">
-      <div class="st">${s.title} ${tagsHtml}</div>
-      <div class="ss">${s.sub}</div>
-      <div class="sd">${s.detail}</div>
-    </div>
-    <div>${riskHtml}</div>`;
-  flow.appendChild(row);
-
-  if (i < steps.length - 1) {
-    const arr = document.createElement('div');
-    arr.className = 'ac';
-    arr.innerHTML = '<svg width="2" height="18" aria-hidden="true"><line x1="1" y1="0" x2="1" y2="18" stroke="var(--color-border-secondary)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>';
-    flow.appendChild(arr);
-  }
-});
-</script>
 </body>
 </html>
