@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI × Web3 工作流</title>
+<style>
+body { background: #0f0f1a; margin: 0; padding: 1.5rem; font-family: -apple-system, 'JetBrains Mono', monospace; }
+</style>
+</head>
+<body>
+<h2 style="color:#e2e8f0;font-size:1rem;margin:0 0 1rem 0">AI × Web3 最小工作流</h2>
+<style>
+:root {
+  --color-background-primary:   #1e1e2e;
+  --color-background-secondary: #2a2a3e;
+  --color-background-info:      #1a3a5c;
+  --color-background-warning:   #3a2a0a;
+  --color-background-success:    #1a3a2a;
+  --color-background-danger:     #3a1a1a;
+  --color-border-primary:        #4a4a6e;
+  --color-border-secondary:       #3a3a5e;
+  --color-border-tertiary:       #2a2a4e;
+  --color-border-info:           #3a6a9c;
+  --color-border-warning:        #6a5a2a;
+  --color-border-success:        #2a5a3a;
+  --color-text-primary:          #e2e8f0;
+  --color-text-secondary:        #94a3b8;
+  --color-text-tertiary:         #64748b;
+  --color-text-info:             #60a5fa;
+  --color-text-warning:          #fbbf24;
+  --color-text-success:          #34d399;
+  --color-text-danger:           #fb7185;
+  --border-radius-md: 6px;
+}
+body { background: #0f0f1a; margin: 0; padding: 1.5rem; font-family: monospace; }
+.fw{padding:1rem 0 1.5rem}
+.leg{display:flex;flex-wrap:wrap;gap:10px 16px;margin-bottom:1.25rem;padding-bottom:12px;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.li{display:flex;align-items:center;gap:5px;color:var(--color-text-secondary)}
+.ld{width:9px;height:9px;border-radius:2px;flex-shrink:0;border:0.5px solid transparent}
+.flow{display:flex;flex-direction:column}
+.sr{display:grid;grid-template-columns:72px 1fr 118px;gap:8px;align-items:start}
+.sb{display:flex;flex-direction:column;align-items:center;gap:5px;padding-top:10px}
+.sn{font-size:10px;color:var(--color-text-tertiary);font-weight:500;letter-spacing:.04em}
+.ab{font-size:10px;font-weight:500;padding:3px 6px;border-radius:4px;text-align:center;line-height:1.45;white-space:nowrap}
+.ab-ai{background:var(--color-background-info);color:var(--color-text-info)}
+.ab-h{background:var(--color-background-warning);color:var(--color-text-warning)}
+.ab-ch{background:var(--color-background-success);color:var(--color-text-success)}
+.ab-all{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.sc{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;cursor:pointer;background:var(--color-background-primary);transition:border-color .15s,background .15s}
+.sc:hover{border-color:var(--color-border-secondary)}
+.sc.open{border-color:var(--color-border-primary);background:var(--color-background-secondary)}
+.st{font-size:13px;font-weight:500;color:var(--color-text-primary);display:flex;align-items:center;gap:6px;flex-wrap:wrap;line-height:1.4}
+.ss{font-size:11px;color:var(--color-text-secondary);margin-top:3px;line-height:1.4}
+.sd{font-size:12px;color:var(--color-text-secondary);margin-top:8px;padding-top:8px;border-top:0.5px solid var(--color-border-tertiary);display:none;line-height:1.65}
+.sc.open .sd{display:block}
+.tg{font-size:9px;padding:2px 5px;border-radius:3px;font-weight:500;white-space:nowrap;line-height:1.5}
+.tg-r{background:var(--color-background-danger);color:var(--color-text-danger)}
+.tg-w{background:var(--color-background-warning);color:var(--color-text-warning)}
+.tg-s{background:var(--color-background-success);color:var(--color-text-success)}
+.tg-i{background:var(--color-background-info);color:var(--color-text-info)}
+.rk{font-size:11px;color:var(--color-text-danger);padding-top:10px;line-height:1.5}
+.ac{margin-left:80px;height:18px;display:flex;align-items:center}
+.hint{font-size:11px;color:var(--color-text-tertiary);margin-top:1rem;text-align:center}
+</style>
+
+<div class="fw">
+  <div class="leg">
+    <div class="li"><div class="ld" style="background:var(--color-background-info);border-color:var(--color-border-info)"></div>AI Agent</div>
+    <div class="li"><div class="ld" style="background:var(--color-background-warning);border-color:var(--color-border-warning)"></div>人工</div>
+    <div class="li"><div class="ld" style="background:var(--color-background-success);border-color:var(--color-border-success)"></div>区块链</div>
+    <div class="li" style="color:var(--color-text-danger)">⚠ 风险点</div>
+    <div class="li">✋ 必须人工确认</div>
+    <div class="li">🔐 钱包签名</div>
+  </div>
+
+  <div class="flow" id="flow"></div>
+  <div class="hint">点击任意步骤查看详细说明</div>
+</div>
+
+<script>
+const steps = [
+  {
+    num:'01', actor:'人工', ac:'ab-h',
+    title:'用户发起任务',
+    sub:'"向 Sepolia 测试网合约 0xABCD… 转账 0.05 ETH"',
+    detail:'人工用自然语言表达目标，这是意图的唯一来源。后续所有步骤都必须能追溯回这里。AI 永远不会自行发起交易。',
+    tags:[],
+    risk:''
+  },
+  {
+    num:'02', actor:'AI Agent', ac:'ab-ai',
+    title:'解析意图 + 生成调用数据',
+    sub:'解析合约 ABI、编码参数、估算 Gas',
+    detail:'Agent 查询合约 ABI（或可信注册表），对函数调用进行编码（如 deposit(address, uint256)），并生成结构化交易对象：{to, value, data, gasLimit, nonce}。此阶段不会触碰私钥。',
+    tags:[],
+    risk:'⚠ 幻觉风险：函数选择器错误、目标地址错误或金额编码有误'
+  },
+  {
+    num:'03', actor:'AI Agent', ac:'ab-ai',
+    title:'生成人类可读的交易摘要',
+    sub:'用通俗语言说明该笔交易将执行的具体操作',
+    detail:'"本次交易将从您的钱包向合约 0xABCD… 发送 0.05 ETH，调用 deposit() 函数。Gas 预估：45,000（约 ¥0.85）。网络：Sepolia 测试网。" 此 AI 生成摘要是人工复核的主要对象。',
+    tags:[],
+    risk:''
+  },
+  {
+    num:'04', actor:'人工 ✋', ac:'ab-h',
+    title:'复核 AI 摘要 — 强制关卡',
+    sub:'逐项核对：地址、金额、函数名、网络、Gas 上限',
+    detail:'人工必须将每个字段与原始意图独立比对，不能仅凭 AI 摘要审批，还需交叉核验原始交易字段。这是链上操作前唯一的人工把关点。如有任何疑问，立即中止并重新生成。',
+    tags:[{l:'✋ 必须确认',c:'tg-r'}],
+    risk:'⚠ 审批疲劳：时间压力下，人工容易跳过复核直接点击"批准"'
+  },
+  {
+    num:'05', actor:'人工 🔐', ac:'ab-h',
+    title:'钱包签名',
+    sub:'MetaMask / Ledger 签名 — AI 在架构上被排除在外',
+    detail:'钱包弹出签名请求，由用户进行密码学签名。使用硬件钱包（Ledger/Trezor）时，设备屏幕会显示待签数据，请核对交易哈希与复核内容一致。AI Agent 因架构设计无法访问私钥，被强制排除于此步骤之外。',
+    tags:[{l:'🔐 需要钱包',c:'tg-w'},{l:'AI 无法签名',c:'tg-r'}],
+    risk:'⚠ 剪贴板劫持或钓鱼覆盖层可在此时静默替换目标地址'
+  },
+  {
+    num:'06', actor:'区块链', ac:'ab-ch',
+    title:'广播至 Sepolia 测试网',
+    sub:'eth_sendRawTransaction → 立即返回交易哈希',
+    detail:'已签名的交易被广播至 Sepolia RPC 节点，立即返回交易哈希，但此时交易尚未确认。此步骤不可逆——在主网上，资金从此刻起处于风险状态。',
+    tags:[{l:'链上操作',c:'tg-s'}],
+    risk:'⚠ 主网风险：抢先交易（MEV）、Gas 价格飙升或内存池拥堵均可影响结果'
+  },
+  {
+    num:'07', actor:'区块链', ac:'ab-ch',
+    title:'等待区块确认',
+    sub:'轮询 eth_getTransactionReceipt — 通常需要 12 个确认',
+    detail:'Agent 持续轮询确认数。Sepolia 测试网上，1–3 个确认通常已足够。返回包含 status=0x1（成功）及事件日志的交易收据。AI Agent 只能读取此结果，无法修改。',
+    tags:[{l:'链上操作',c:'tg-s'}],
+    risk:''
+  },
+  {
+    num:'08', actor:'人工 / AI', ac:'ab-all',
+    title:'在区块浏览器验证结果',
+    sub:'sepolia.etherscan.io — 这是唯一权威的真实来源',
+    detail:'独立核验：status=Success、to= 正确地址、value= 正确金额、事件日志与预期合约状态变更一致。区块浏览器是唯一可信来源，即使 AI 报告"成功"，也必须在此处独立确认。',
+    tags:[{l:'验证结果',c:'tg-i'}],
+    risk:'⚠ 切勿以 AI 的"成功"反馈代替验证——浏览器是唯一的无需信任数据源'
+  },
+  {
+    num:'09', actor:'✅ 完成', ac:'ab-all',
+    title:'生成收据 + 审计日志',
+    sub:'永久记录交易哈希、区块号、Gas 消耗、审批人信息',
+    detail:'存储内容：交易哈希、区块号、Gas 消耗量、时间戳、AI 生成摘要、人工审批人身份标识及浏览器链接。区块链提供不可篡改的执行证明，日志保存决策上下文。审计链路完整闭环。',
+    tags:[{l:'已完成',c:'tg-s'}],
+    risk:''
+  }
+];
+
+const flow = document.getElementById('flow');
+
+steps.forEach((s, i) => {
+  const row = document.createElement('div');
+  row.className = 'sr';
+  const tagsHtml = s.tags.map(t => `<span class="tg ${t.c}">${t.l}</span>`).join(' ');
+  const riskHtml = s.risk ? `<div class="rk">${s.risk}</div>` : '';
+  row.innerHTML = `
+    <div class="sb">
+      <span class="sn">${s.num}</span>
+      <span class="ab ${s.ac}">${s.actor}</span>
+    </div>
+    <div class="sc" onclick="this.classList.toggle('open')">
+      <div class="st">${s.title} ${tagsHtml}</div>
+      <div class="ss">${s.sub}</div>
+      <div class="sd">${s.detail}</div>
+    </div>
+    <div>${riskHtml}</div>`;
+  flow.appendChild(row);
+
+  if (i < steps.length - 1) {
+    const arr = document.createElement('div');
+    arr.className = 'ac';
+    arr.innerHTML = '<svg width="2" height="18" aria-hidden="true"><line x1="1" y1="0" x2="1" y2="18" stroke="var(--color-border-secondary)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>';
+    flow.appendChild(arr);
+  }
+});
+</script>
+</body>
+</html>
