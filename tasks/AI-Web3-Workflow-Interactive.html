@@ -4,77 +4,96 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI × Web3 工作流</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:           #0d0d1a;
-  --bg-card:      #13132a;
-  --bg-card-alt:  #16163a;
-  --border:       #2a2a5e;
-  --cyan:         #22d3ee;
-  --cyan-bg:      rgba(34,211,238,0.08);
-  --green:        #34d399;
-  --green-bg:     rgba(52,211,153,0.08);
-  --orange:       #fbbf24;
-  --orange-bg:    rgba(251,191,36,0.08);
-  --red:          #fb7185;
-  --red-bg:       rgba(251,113,133,0.08);
-  --purple:       #a78bfa;
-  --purple-bg:    rgba(167,139,250,0.08);
-  --text:         #e2e8f0;
-  --text-sub:     #64748b;
+  --bg:           #f8f9fc;
+  --card:         #ffffff;
+  --card-alt:     #f0f2f8;
+  --border:       #dde1ed;
+  --border-strong:#b8bfd4;
+  --text:         #1a1f36;
+  --text-sub:     #5a6178;
+  --text-tip:     #8892a8;
+  --cyan:         #0891b2;
+  --cyan-bg:      #e0f7fb;
+  --green:        #059669;
+  --green-bg:     #d1fae5;
+  --orange:       #d97706;
+  --orange-bg:    #fef3c7;
+  --red:          #e11d48;
+  --red-bg:       #ffe4e6;
+  --purple:       #7c3aed;
+  --purple-bg:    #ede9fe;
+  --gray-bg:      #f1f3f8;
+  --shadow:       0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-hover: 0 4px 12px rgba(0,0,0,0.1);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, 'JetBrains Mono', monospace;
+  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
   padding: 2rem 1rem;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
-.container { max-width: 820px; margin: 0 auto; }
+.container { max-width: 860px; margin: 0 auto; }
 
 /* ── Header ── */
-.header { margin-bottom: 2rem; }
-.header h1 { font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
-.header p { color: var(--text-sub); font-size: 0.75rem; margin-top: 0.4rem; }
+.header { margin-bottom: 1.5rem; }
+.header h1 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.header p {
+  color: var(--text-sub);
+  font-size: 0.82rem;
+  margin-top: 0.35rem;
+  font-weight: 400;
+}
 
 /* ── Legend ── */
 .legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.2rem;
-  padding: 0.75rem 1rem;
-  background: var(--bg-card);
+  gap: 0.45rem 1.1rem;
+  padding: 0.7rem 1rem;
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: 10px;
   margin-bottom: 1.5rem;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
+  box-shadow: var(--shadow);
 }
-.legend-item { display: flex; align-items: center; gap: 0.4rem; color: var(--text-sub); }
+.legend-item { display: flex; align-items: center; gap: 0.35rem; color: var(--text-sub); font-weight: 500; }
 .legend-dot {
-  width: 9px; height: 9px;
+  width: 10px; height: 10px;
   border-radius: 3px;
   flex-shrink: 0;
 }
-.legend-dot.cyan    { background: var(--cyan-bg);    border: 1px solid var(--cyan); }
-.legend-dot.green   { background: var(--green-bg);   border: 1px solid var(--green); }
-.legend-dot.orange  { background: var(--orange-bg);  border: 1px solid var(--orange); }
-.legend-dot.red     { background: var(--red-bg);     border: 1px solid var(--red); }
-.legend-dot.purple  { background: var(--purple-bg);  border: 1px solid var(--purple); }
+.legend-dot.cyan   { background: var(--cyan-bg);    border: 1.5px solid var(--cyan); }
+.legend-dot.green  { background: var(--green-bg);   border: 1.5px solid var(--green); }
+.legend-dot.orange { background: var(--orange-bg);   border: 1.5px solid var(--orange); }
+.legend-dot.red    { background: var(--red-bg);      border: 1.5px solid var(--red); }
+.legend-dot.purple { background: var(--purple-bg);    border: 1.5px solid var(--purple); }
+.legend-dot.gray   { background: var(--gray-bg);     border: 1.5px solid var(--border-strong); }
 
 /* ── Flow ── */
 .flow { display: flex; flex-direction: column; gap: 0; }
 
-/* ── Step row ── */
+/* ── Step ── */
 .step {
   display: grid;
-  grid-template-columns: 52px 1fr 90px;
+  grid-template-columns: 54px 1fr 96px;
   gap: 10px;
   align-items: stretch;
-  min-height: 72px;
 }
 
-/* ── Step label (left column) ── */
+/* ── Label ── */
 .step-label {
   display: flex;
   flex-direction: column;
@@ -83,133 +102,147 @@ body {
   gap: 5px;
 }
 .step-num {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  color: var(--text-sub);
-  letter-spacing: 0.05em;
+  color: var(--text-tip);
+  letter-spacing: 0.06em;
 }
 .step-actor {
   font-size: 0.65rem;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 5px;
   white-space: nowrap;
+  letter-spacing: 0.01em;
 }
-.actor-h     { background: var(--cyan-bg);    color: var(--cyan);    border: 1px solid var(--cyan); }
-.actor-ai   { background: var(--green-bg);   color: var(--green);   border: 1px solid var(--green); }
-.actor-ch   { background: var(--purple-bg);  color: var(--purple);  border: 1px solid var(--purple); }
-.actor-all  { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid #334; }
+.actor-h    { background: var(--cyan-bg);    color: var(--cyan);    border: 1.5px solid var(--cyan); }
+.actor-ai  { background: var(--green-bg);   color: var(--green);   border: 1.5px solid var(--green); }
+.actor-ch  { background: var(--purple-bg);   color: var(--purple);  border: 1.5px solid var(--purple); }
+.actor-all { background: var(--gray-bg);     color: var(--text-sub); border: 1.5px solid var(--border-strong); }
 
-/* ── Step card (middle column) ── */
+/* ── Card ── */
 .step-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 14px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 13px 15px;
+  box-shadow: var(--shadow);
   position: relative;
-  overflow: hidden;
+  transition: box-shadow 0.15s;
 }
 /* left accent bar */
 .step-card::before {
   content: '';
   position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 3px;
-  border-radius: 10px 0 0 10px;
+  left: 0; top: 6px; bottom: 6px;
+  width: 3.5px;
+  border-radius: 0 4px 4px 0;
 }
-.card-h::before    { background: var(--cyan); }
-.card-ai::before  { background: var(--green); }
-.card-ch::before  { background: var(--purple); }
-.card-all::before { background: var(--border); }
+.card-h::before   { background: var(--cyan); }
+.card-ai::before { background: var(--green); }
+.card-ch::before { background: var(--purple); }
+.card-all::before{ background: var(--border-strong); }
 
 .step-title {
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text);
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+  line-height: 1.4;
 }
 .step-sub {
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   color: var(--text-sub);
   margin-top: 4px;
   line-height: 1.5;
 }
 .step-detail {
-  font-size: 0.72rem;
-  color: #94a3b8;
+  font-size: 0.8rem;
+  color: var(--text-sub);
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid var(--border);
-  line-height: 1.65;
+  line-height: 1.7;
 }
 
-/* ── Tag ── */
+/* ── Tags ── */
 .tag {
   display: inline-flex;
   align-items: center;
-  font-size: 0.6rem;
-  font-weight: 600;
-  padding: 1px 5px;
-  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
   white-space: nowrap;
+  letter-spacing: 0.02em;
 }
-.tag-h   { background: var(--cyan-bg);    color: var(--cyan);    }
-.tag-w   { background: var(--orange-bg);  color: var(--orange);  }
-.tag-s   { background: var(--green-bg);   color: var(--green);   }
-.tag-i   { background: var(--purple-bg);  color: var(--purple);  }
-.tag-r   { background: var(--red-bg);     color: var(--red);     }
+.tag-h   { background: var(--cyan-bg);    color: var(--cyan); }
+.tag-w   { background: var(--orange-bg);  color: var(--orange); }
+.tag-s   { background: var(--green-bg);   color: var(--green); }
+.tag-i   { background: var(--purple-bg);   color: var(--purple); }
+.tag-r   { background: var(--red-bg);      color: var(--red); }
 
-/* ── Risk (right column) ── */
+/* ── Risk column ── */
 .step-risk {
   padding-top: 14px;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   color: var(--red);
-  line-height: 1.5;
-  opacity: 0.9;
+  line-height: 1.55;
+  font-weight: 500;
 }
 
-/* ── Connector arrow ── */
+/* ── Connector ── */
 .connector {
   display: flex;
   justify-content: center;
   padding: 2px 0;
-  height: 20px;
+  height: 22px;
 }
-.connector svg { opacity: 0.5; }
+.connector svg { opacity: 0.55; }
 
-/* ── Branch flow (rpc row) ── */
+/* ── RPC Branch ── */
 .branch {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-top: 6px;
+  margin-top: 8px;
   padding-top: 8px;
   border-top: 1px dashed var(--border);
 }
 .branch-label {
   grid-column: 1 / -1;
-  font-size: 0.65rem;
-  color: var(--text-sub);
+  font-size: 0.68rem;
+  color: var(--text-tip);
   text-align: center;
+  font-weight: 500;
 }
 .branch-card {
-  background: var(--bg-card-alt);
+  background: var(--card-alt);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px 10px;
-  font-size: 0.72rem;
 }
-.branch-card .b-title { font-weight: 600; display: flex; align-items: center; gap: 4px; }
-.branch-card .b-sub   { color: var(--text-sub); font-size: 0.68rem; margin-top: 3px; }
-.branch-card .b-tag   { margin-top: 4px; }
+.branch-card .b-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.branch-card .b-sub {
+  font-size: 0.72rem;
+  color: var(--text-sub);
+  margin-top: 3px;
+}
+.branch-card .b-tag { margin-top: 5px; display: flex; gap: 4px; flex-wrap: wrap; }
 
-/* ── Wallet signature highlight ── */
+/* ── Wallet highlight ── */
 .wallet-card {
   border-color: var(--red);
-  background: linear-gradient(135deg, var(--bg-card) 60%, var(--red-bg));
+  background: linear-gradient(135deg, #fff 70%, var(--red-bg));
 }
 
 /* ── Footer ── */
@@ -218,8 +251,8 @@ body {
   padding-top: 1rem;
   border-top: 1px solid var(--border);
   text-align: center;
-  font-size: 0.68rem;
-  color: var(--text-sub);
+  font-size: 0.72rem;
+  color: var(--text-tip);
 }
 </style>
 </head>
@@ -237,7 +270,7 @@ body {
     <div class="legend-item"><div class="legend-dot purple"></div>区块链</div>
     <div class="legend-item"><div class="legend-dot orange"></div>RPC 调用</div>
     <div class="legend-item"><div class="legend-dot red"></div>钱包签名（风险点）</div>
-    <div class="legend-item" style="color:var(--red)">⚠ 风险提示</div>
+    <div class="legend-item"><div class="legend-dot gray"></div>完成 / 验证</div>
   </div>
 
   <div class="flow">
@@ -256,7 +289,7 @@ body {
       <div></div>
     </div>
 
-    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#475669" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+    <div class="connector"><svg width="14" height="20"><line x1="7" y1="0" x2="7" y2="20" stroke="#b8bfd4" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
 
     <!-- 02 -->
     <div class="step">
@@ -272,7 +305,7 @@ body {
       <div class="step-risk">⚠ 幻觉风险：函数选择器错误、目标地址错误或金额编码有误</div>
     </div>
 
-    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#475669" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+    <div class="connector"><svg width="14" height="20"><line x1="7" y1="0" x2="7" y2="20" stroke="#b8bfd4" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
 
     <!-- 03 -->
     <div class="step">
@@ -288,9 +321,9 @@ body {
       <div></div>
     </div>
 
-    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#475669" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+    <div class="connector"><svg width="14" height="20"><line x1="7" y1="0" x2="7" y2="20" stroke="#b8bfd4" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
 
-    <!-- 04 – RPC branch -->
+    <!-- 04 – RPC -->
     <div class="step">
       <div class="step-label">
         <span class="step-num">04</span>
@@ -298,25 +331,31 @@ body {
       </div>
       <div class="step-card card-ai">
         <div class="step-title">AI 规划工具 · RPC 调用</div>
-        <div class="step-detail" style="border:none;margin-top:0;padding-top:0">AI 判断用哪个 RPC 方法：</div>
+        <div class="step-detail" style="border:none;margin-top:0;padding-top:0;color:var(--text-tip)">AI 判断用哪个 RPC 方法：</div>
         <div class="branch">
           <div class="branch-label">AI → RPC 接口 → 区块链节点</div>
           <div class="branch-card">
-            <div class="b-title" style="color:var(--orange)">🔧 eth_call（只读）</div>
+            <div class="b-title" style="color:var(--green)">🔧 eth_call（只读）</div>
             <div class="b-sub">查余额、读合约状态</div>
-            <div class="b-tag"><span class="tag tag-s">✓ 不签名</span> <span class="tag tag-s">✓ 不付 Gas</span></div>
+            <div class="b-tag">
+              <span class="tag tag-s">✓ 不签名</span>
+              <span class="tag tag-s">✓ 不付 Gas</span>
+            </div>
           </div>
           <div class="branch-card">
-            <div class="b-title" style="color:var(--red)">🔧 eth_sendTx（写入）</div>
+            <div class="b-title" style="color:var(--orange)">🔧 eth_sendTx（写入）</div>
             <div class="b-sub">写合约、转账</div>
-            <div class="b-tag"><span class="tag tag-w">⚠ 需钱包签名</span> <span class="tag tag-w">⚠ 付 Gas</span></div>
+            <div class="b-tag">
+              <span class="tag tag-w">⚠ 需钱包签名</span>
+              <span class="tag tag-w">⚠ 付 Gas</span>
+            </div>
           </div>
         </div>
       </div>
       <div></div>
     </div>
 
-    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#475669" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+    <div class="connector"><svg width="14" height="20"><line x1="7" y1="0" x2="7" y2="20" stroke="#b8bfd4" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
 
     <!-- 05 -->
     <div class="step">
@@ -332,23 +371,23 @@ body {
       <div class="step-risk">⚠ 审批疲劳：时间压力下容易跳过复核直接点"批准"</div>
     </div>
 
-    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#475669" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+    <div class="connector"><svg width="14" height="20"><line x1="7" y1="0" x2="7" y2="20" stroke="#b8bfd4" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
 
-    <!-- 06 – wallet -->
+    <!-- 06 – Wallet -->
     <div class="step">
       <div class="step-label">
         <span class="step-num">06</span>
         <span class="step-actor actor-h" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">🔐 钱包</span>
       </div>
       <div class="step-card card-h wallet-card">
-        <div class="step-title" style="color:var(--red)">钱包签名确认 <span class="tag tag-w">⚠ AI 无法签名</span></div>
+        <div class="step-title" style="color:var(--red)">钱包签名确认 <span class="tag tag-w" style="margin-left:4px">⚠ AI 无法签名</span></div>
         <div class="step-sub">MetaMask / Ledger 签名 — AI 被架构强制排除</div>
         <div class="step-detail">钱包弹出签名请求，用户密码学签名。硬件钱包（Ledger/Trezor）设备屏幕会显示待签数据，请核对交易哈希与复核内容一致。AI Agent 无法访问私钥，被强制排除于此步骤之外。</div>
       </div>
-      <div class="step-risk">⚠ 剪贴板劫持或钓鱼覆盖层可在此静默替换目标地址</div>
+      <div class="step-risk">⚠ 钓鱼覆盖层可在此静默替换目标地址</div>
     </div>
 
-    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#fb7185" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+    <div class="connector"><svg width="14" height="20"><line x1="7" y1="0" x2="7" y2="20" stroke="#e11d48" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
 
     <!-- 07 -->
     <div class="step">
@@ -364,7 +403,7 @@ body {
       <div class="step-risk">⚠ 主网风险：MEV、Gas 飙升或内存池拥堵均可影响结果</div>
     </div>
 
-    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+    <div class="connector"><svg width="14" height="20"><line x1="7" y1="0" x2="7" y2="20" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
 
     <!-- 08 -->
     <div class="step">
@@ -380,7 +419,7 @@ body {
       <div></div>
     </div>
 
-    <div class="connector"><svg width="14" height="18"><line x1="7" y1="0" x2="7" y2="18" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
+    <div class="connector"><svg width="14" height="20"><line x1="7" y1="0" x2="7" y2="20" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div>
 
     <!-- 09 -->
     <div class="step">
@@ -389,7 +428,7 @@ body {
         <span class="step-actor actor-all">✅ 完成</span>
       </div>
       <div class="step-card card-all">
-        <div class="step-title">在区块浏览器验证结果 <span class="tag tag-i">🔍 唯一可信来源</span></div>
+        <div class="step-title">在区块浏览器验证结果 <span class="tag tag-i" style="margin-left:4px">🔍 唯一可信来源</span></div>
         <div class="step-sub">sepolia.etherscan.io — 独立核验 status / 地址 / 金额 / 事件日志</div>
         <div class="step-detail">独立核验：status=Success、to=正确地址、value=正确金额、事件日志与预期合约状态变更一致。区块浏览器是唯一可信来源，即使 AI 报告"成功"，也必须在此处独立确认。</div>
       </div>
