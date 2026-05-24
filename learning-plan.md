@@ -109,6 +109,7 @@
   - [x] Indexing — Day 3
   - [x] Security — Day 3
   - [x] Dev Stack — Day 3
-- [ ] 阶段二：AI 基础 — 待开始
+- [x] 阶段二：AI 基础 — 完成（Day 4-5）
+  - [x] EVM / Gas / Blocks / PoS 深化 — Day 7
 - [ ] 阶段三：AI × Web3 Bridge
 - [ ] 阶段四：前沿探索 & Hackathon 准备
