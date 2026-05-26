@@ -1,8 +1,4 @@
-# AI × Web3 问题地图 + Week 2 主线决策
-
-> 任务产出 | 日期：2026-05-26 | 产出方：Hermes subagent research
-
----
+# AI × Web3 问题地图
 
 ## 一、问题地图（6 个方向）
 
