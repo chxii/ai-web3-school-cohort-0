@@ -373,17 +373,103 @@ ERC-8183 没有定义如何找到 Agent、如何发起支付请求。ERC-8004 �
 
 ---
 
-## 6. 参考资料
+## 6. 具体案例：代码安全审查委托
+
+> 以下案例与上方协议设计一一对应，可作为 Hackathon 演示参考。
+
+**场景**：开发者委托 AI Agent 完成代码库安全审查，约定价格 50 USDC。
+
+### 6.1 角色映射
+
+| 角色 | 本案例 | 协议对应 |
+|------|--------|---------|
+| Developer（Client） | 委托方，支付 50 USDC | ERC-8183: client |
+| Code Agent（Provider） | 执行方，运行 SAST/SCA/逻辑审查 | ERC-8183: provider |
+| Evaluator | 自动检查报告覆盖率 ≥90%、格式合规 | ERC-8183: evaluator |
+| Escrow 合约 | 锁定 50 USDC，按验收结果释放 | ERC-8183 JobEscrow |
+| DAO 仲裁 | 争议时介入裁决 | ERC-8183 Hook → Kleros 等 |
+
+### 6.2 7 步交互详情
+
+#### 步骤 1：报价（Quote）
+- **消息**：`POST /quote { repo_url, scan_depth:"full" }` → `200 { price:"50 USDC", sla:"2h", criteria_hash:"0xabc…", ttl:300 }`
+- **协议**：x402/MPP — HTTP 402 触发机器可读报价
+
+#### 步骤 2：预算授权（Budget Authorization）
+- **消息**：`createPact({ budget:50USDC, agent_addr, deadline, criteria_hash })` → `pact_id + lock_tx_hash`
+- **关键数据**：预算上限（50 USDC）、受益方地址、截止时间、验收标准哈希
+- **协议**：Cobo CAW Pact（预算边界控制）+ ERC-8183 JobEscrow（条件锁仓）
+
+#### 步骤 3：执行（Execution）
+- **消息**：Agent 内部运行 SAST 扫描 → SCA 依赖检查 → 逻辑审查 → 报告草稿
+- **心跳**：`heartbeat({ step, ts, partial_hash })` × N 次，Escrow 监听 SLA 超时
+- **协议**：Cobo CAW 审计日志 + ERC-8183 JobRecord（步骤上链）
+
+#### 步骤 4：交付（Delivery）
+- **消息**：`submitDelivery({ report_cid, proof_merkle, tool_sig })` → Escrow 通知 Evaluator
+- **关键数据**：报告 CID（IPFS）、执行证明 Merkle Root、工具版本签名
+- **协议**：ERC-8183 DeliveryProof 标准化提交接口
+
+#### 步骤 5：验收（Acceptance）
+- **消息**：Evaluator 检查覆盖率 ≥90%、格式合规、漏洞列表非空 → `verdict({ pass:true/false, reason })`
+- **用户操作**：`accept()` 或 `dispute({ evidence_cid })`
+- **协议**：ERC-8183 Evaluator 接口，标准化 verdict 与争议事件
+
+#### 步骤 6：结算（Payment / Refund / Dispute）
+- **路径一（验收通过）**：`release(50 USDC)` → Agent 收到款
+- **路径二（超时/Evaluator fail）**：`refund(50 USDC)` → Developer 收回
+- **路径三（争议）**：`arbitrate({ agent:40%, dev:60% })` → DAO 仲裁裁定
+- **协议**：ERC-8183 EscrowRelease + DisputeArbitration；x402 Receipt 格式
+
+#### 步骤 7：记录证明（Attestation）
+- **消息**：Escrow 广播 `JobCreated / DeliveryProof / Verdict / SettlementDone` 事件
+- **审计日志**：CAW 记录授权范围、执行动作、异常事件序列
+- **协议**：Cobo CAW 审计模块 + x402 Receipt + ERC-8183 SettlementRecord
+
+### 6.3 协议覆盖对照
+
+| 流程步骤 | x402 覆盖 | ERC-8183 覆盖 |
+|---------|----------|--------------|
+| ① 报价 | ✅ 报价格式 | ❌ |
+| ② 预算授权 | ✅ 支付授权 | ✅ JobEscrow 锁仓 |
+| ③ 执行 | ❌ | ✅ 步骤上链 |
+| ④ 交付 | ❌ | ✅ DeliveryProof |
+| ⑤ 验收 | ❌ | ✅ Evaluator 裁定 |
+| ⑥ 结算 | ✅ 转账触发 | ✅ 争议仲裁 |
+| ⑦ 记录 | ✅ Receipt 收据 | ✅ SettlementRecord |
+
+**结论**：
+- **x402 重点覆盖**：① 报价 → ② 授权 → ⑥ 付款 → ⑦ 收据（M2M 支付链路）
+- **ERC-8183 重点覆盖**：② 执行 → ④ 交付 → ⑤ 验收 → ⑥ 结算/争议（任务层完整治理）
+- **两者互补**：x402 + ERC-8183 覆盖全部 7 步
+
+### 6.4 流程图（静态版）
+
+```
+开发者 ──POST /quote──→ Agent ──200 { price, sla, criteria_hash }──→ 开发者
+开发者 ──createPact + fund──→ Escrow ──JobCreated──→ Agent
+Agent ──heartbeat × N──→ Escrow（监控 SLA 超时）
+Agent ──submitDelivery──→ Escrow ──VerifyRequest──→ Evaluator
+Evaluator ──verdict──→ Escrow
+开发者 ──accept() / dispute()──→ Escrow
+Escrow ──release / refund / arbitrate──→ Agent / 开发者
+Escrow ──emit Events──→ 链上记录
+```
+
+---
+
+## 7. 参考资料
 
 | 协议 | 关键概念 | 链接 |
 |------|---------|------|
 | x402 | HTTP 402 Payment Required, Facilitator, Batch Settlement | https://docs.x402.org/introduction |
 | ERC-8183 | Job Escrow, Evaluator, Hook, Lifecycle (Open→Funded→Submitted→Completed) | https://eips.ethereum.org/EIPS/eip-8183 |
 | ERC-8004 | Agent Identity, ERC-721 Registry, Reputation Registry, agentWallet | https://eips.ethereum.org/EIPS/eip-8004 |
+| Cobo CAW | Agentic Wallet, Pact 预算控制, 审计日志 | https://www.cobo.com/products/agentic-wallet/manual/start-here/introduction |
 
 ---
 
-## 7. 流程符号表示（ASCII 图）
+## 8. 流程符号表示（ASCII 图）
 
 ```
 Client                Agent                   JobContract           Evaluator            Facilitator
@@ -418,4 +504,4 @@ Client                Agent                   JobContract           Evaluator   
 
 ---
 
-*文档版本：1.0 | 生成日期：2026-05-27*
+*文档版本：1.1 | 生成日期：2026-05-27 | 更新：新增代码审查具体案例（Section 6）*
