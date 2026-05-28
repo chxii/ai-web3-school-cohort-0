@@ -4,25 +4,8 @@
 
 ## 任务 1：Agent 链上动作执行流程图
 
-流程图文件：`diagrams/agent-onchain-flow.excalidraw`
-
-可拖拽到 [excalidraw.com](https://excalidraw.com) 打开并编辑。
-
-**步骤归属**：
 
 ![Agent 链上动作执行流程图](../assets/agent-onchain-flow-preview.jpg)
-
-| 步骤 | 自动化 | 人工确认 |
-|------|--------|----------|
-| 用户发起任务 | — | 必须 |
-| 权限策略检查 | 自动（结果触发确认） | — |
-| 人工确认 | — | 必须 |
-| 构建交易（data/value/gas） | 自动 | — |
-| MPC 签名（多设备协作） | 自动 | — |
-| 提交链上（mempool/bundle） | 自动 | — |
-| 等待区块确认 | 自动 | — |
-| 链上确认写入 | 自动 | — |
-| 写日志 / EAS attestation | 自动 | — |
 
 ---
 
