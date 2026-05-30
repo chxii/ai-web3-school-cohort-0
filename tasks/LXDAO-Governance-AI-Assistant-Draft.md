@@ -174,25 +174,7 @@ Budget Checklist（每月末）：
 
 ---
 
-## 六、概念验证 Demo
 
-**Demo A: Meeting-to-Action Workflow**
-- 输入：LXDAO CC#203 会议帖（含议程结构）
-- 输出：
-  - [AI] 会议摘要（讨论了什么/决定了什么）
-  - [AI] Action Items：任务 + Owner + Deadline + 是否含预算影响
-  - [AI] 标注每个 Action 的"需人工确认"项
-
-**Demo B: Budget Execution Checklist**
-- 输入：LIP13 Season Budget Framework + 当月项目进展 + Fairsharing 贡献数据
-- 输出：
-  - [AI] 每个项目 KPI 完成度（进度 %）
-  - [AI] 月度预算消耗 vs 可用预算
-  - [AI] 异常检测（超支项目、2 周无更新项目）
-  - [AI] 汇总下季预算申请建议
-  - [HUMAN] 标记"需在 Forum 公示"项目
-
----
 
 ## 数据来源
 
@@ -206,4 +188,3 @@ Budget Checklist（每月末）：
 | Governance Forum | 工作组列表/投票/Snapshot 提案 |
 | docs.lxdao.io | 页面结构（部分 404） |
 
-*所有 governance lifecycle 步骤均有来源，无推演。*
